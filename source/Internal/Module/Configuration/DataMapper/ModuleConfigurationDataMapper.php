@@ -25,6 +25,8 @@ class ModuleConfigurationDataMapper implements ModuleConfigurationDataMapperInte
     {
         $data = [
             'id'          => $configuration->getId(),
+            'path'        => $configuration->getPath(),
+            'version'     => $configuration->getVersion(),
             'autoActive'  => $configuration->isAutoActive(),
             'title'       => $configuration->getTitle(),
             'description' => $configuration->getDescription(),
@@ -49,6 +51,8 @@ class ModuleConfigurationDataMapper implements ModuleConfigurationDataMapperInte
         $moduleConfiguration = new ModuleConfiguration();
         $moduleConfiguration
             ->setId($data['id'])
+            ->setPath($data['path'])
+            ->setVersion($data['version'])
             ->setAutoActive($data['autoActive'])
             ->setTitle($data['title'])
             ->setDescription($data['description'])
