@@ -7,11 +7,9 @@
 namespace OxidEsales\EshopCommunity\Internal\Module\Install;
 
 use OxidEsales\EshopCommunity\Internal\Module\Configuration\Dao\ProjectConfigurationDaoInterface;
-use OxidEsales\EshopCommunity\Internal\Module\Configuration\DataObject\Chain;
 use OxidEsales\EshopCommunity\Internal\Module\Configuration\DataObject\ModuleConfiguration;
-use OxidEsales\EshopCommunity\Internal\Module\Configuration\DataObject\ModuleSetting;
 use OxidEsales\EshopCommunity\Internal\Module\Configuration\DataObject\ProjectConfiguration;
-use OxidEsales\EshopCommunity\Internal\Module\Configuration\DataObject\ShopConfiguration;
+use OxidEsales\EshopCommunity\Internal\Module\Configuration\Service\ModuleConfigurationMergingServiceInterface;
 use OxidEsales\EshopCommunity\Internal\Module\MetaData\DataMapper\MetaDataToModuleConfigurationDataMapperInterface;
 use OxidEsales\EshopCommunity\Internal\Module\MetaData\Service\MetaDataProviderInterface;
 use OxidEsales\EshopCommunity\Internal\Utility\ContextInterface;
@@ -47,22 +45,30 @@ class ModuleConfigurationInstaller implements ModuleConfigurationInstallerInterf
     private $context;
 
     /**
+     * @var ModuleConfigurationMergingServiceInterface
+     */
+    private $moduleConfigurationMergingService;
+
+    /**
      * ModuleConfigurationInstaller constructor.
      * @param ProjectConfigurationDaoInterface                 $projectConfigurationDao
      * @param MetaDataProviderInterface                        $metadataProvider
      * @param MetaDataToModuleConfigurationDataMapperInterface $metadataMapper
      * @param ContextInterface                                 $context
+     * @param ModuleConfigurationMergingServiceInterface       $moduleConfigurationMergingService
      */
     public function __construct(
         ProjectConfigurationDaoInterface                    $projectConfigurationDao,
         MetaDataProviderInterface                           $metadataProvider,
         MetaDataToModuleConfigurationDataMapperInterface    $metadataMapper,
-        ContextInterface                                    $context
+        ContextInterface                                    $context,
+        ModuleConfigurationMergingServiceInterface          $moduleConfigurationMergingService
     ) {
         $this->projectConfigurationDao = $projectConfigurationDao;
         $this->metadataProvider = $metadataProvider;
         $this->metadataMapper = $metadataMapper;
         $this->context = $context;
+        $this->moduleConfigurationMergingService = $moduleConfigurationMergingService;
     }
 
 
@@ -76,7 +82,6 @@ class ModuleConfigurationInstaller implements ModuleConfigurationInstallerInterf
 
         $projectConfiguration = $this->projectConfigurationDao->getConfiguration();
         $projectConfiguration = $this->addModuleConfigurationToAllShops($moduleConfiguration, $projectConfiguration);
-        $projectConfiguration = $this->addClassExtensionsToChainForAllShops($moduleConfiguration, $projectConfiguration);
 
         $this->projectConfigurationDao->persistConfiguration($projectConfiguration);
     }
@@ -97,34 +102,7 @@ class ModuleConfigurationInstaller implements ModuleConfigurationInstallerInterf
         );
 
         foreach ($environmentConfiguration->getShopConfigurations() as $shopConfiguration) {
-            /** @var $shopConfiguration ShopConfiguration */
-            $shopConfiguration->addModuleConfiguration($moduleConfiguration);
-        }
-
-        return $projectConfiguration;
-    }
-
-    /**
-     * @param ModuleConfiguration  $moduleConfiguration
-     * @param ProjectConfiguration $projectConfiguration
-     *
-     * @return ProjectConfiguration
-     */
-    private function addClassExtensionsToChainForAllShops(
-        ModuleConfiguration $moduleConfiguration,
-        ProjectConfiguration $projectConfiguration
-    ): ProjectConfiguration {
-        if ($moduleConfiguration->hasSetting(ModuleSetting::CLASS_EXTENSIONS)) {
-            $classExtensions = $moduleConfiguration->getSetting(ModuleSetting::CLASS_EXTENSIONS);
-
-            $environmentConfiguration = $projectConfiguration->getEnvironmentConfiguration(
-                $this->context->getEnvironment()
-            );
-
-            foreach ($environmentConfiguration->getShopConfigurations() as $shopConfiguration) {
-                $classExtensionChain = $shopConfiguration->getChain(Chain::CLASS_EXTENSIONS);
-                $classExtensionChain->addExtensions($classExtensions->getValue());
-            }
+            $this->moduleConfigurationMergingService->merge($shopConfiguration, $moduleConfiguration);
         }
 
         return $projectConfiguration;
