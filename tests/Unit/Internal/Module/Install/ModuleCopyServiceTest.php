@@ -12,8 +12,10 @@ use OxidEsales\EshopCommunity\Internal\Common\Exception\DirectoryExistentExcepti
 use OxidEsales\EshopCommunity\Internal\Module\Configuration\DataObject\OxidEshopPackage;
 use OxidEsales\EshopCommunity\Internal\Module\Install\ModuleCopyService;
 use OxidEsales\EshopCommunity\Internal\Application\Utility\BasicContextInterface;
+use OxidEsales\EshopCommunity\Internal\Module\Install\OxidEshopPackageFactoryInterface;
 use OxidEsales\EshopCommunity\Internal\Module\Install\PackageServiceInterface;
 use OxidEsales\EshopCommunity\Tests\Integration\Internal\TestContainerFactory;
+use OxidEsales\EshopCommunity\Tests\Integration\Internal\ContainerTrait;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -39,10 +41,8 @@ class ModuleCopyServiceTest extends TestCase
             ]
         ];
 
-        $container = $this->getCompiledTestContainer();
-        /** @var BasicContextInterface $context */
-        $context = $container->get(BasicContextInterface::class);
-
+        vfsStream::setup();
+        $context = $this->getContext();
         $packageService = $this->getPackageService($packageName, $extra);
 
         $copyGlobService = $this->getMockBuilder(CopyGlobServiceInterface::class)->getMock();
@@ -79,7 +79,7 @@ class ModuleCopyServiceTest extends TestCase
                 ]
             ]
         ];
-        $this->vfsStreamDirectory = vfsStream::setup('root', null, $structure);
+        vfsStream::setup('root', null, $structure);
 
         $packageName = 'myvendor/mymodule';
 
@@ -108,15 +108,15 @@ class ModuleCopyServiceTest extends TestCase
      * @param string $packageName
      * @param array  $extraParameters
      *
-     * @return PackageServiceInterface
+     * @return OxidEshopPackageFactoryInterface
      */
-    private function getPackageService(string $packageName, array $extraParameters = []) : PackageServiceInterface
+    private function getPackageService(string $packageName, array $extraParameters = []) : OxidEshopPackageFactoryInterface
     {
         $package = new OxidEshopPackage();
         $package->setName($packageName);
         $package->setExtraParameters($extraParameters);
 
-        $packageService = $this->getMockBuilder(PackageServiceInterface::class)
+        $packageService = $this->getMockBuilder(OxidEshopPackageFactoryInterface::class)
             ->setMethods(['getPackage'])->getMock();
         $packageService->method('getPackage')->willReturn($package);
 
@@ -131,6 +131,16 @@ class ModuleCopyServiceTest extends TestCase
         $context = $this->getMockBuilder(BasicContextInterface::class)->getMock();
         $context->method('getModulesPath')->willReturn(vfsStream::url('root/source/modules'));
         return $context;
+    }
+
+
+    /**
+     * @return BasicContextInterface
+     */
+    private function getCopyGlobService() : CopyGlobServiceInterface
+    {
+        $copyGlobServiceInterface = $this->getMockBuilder(CopyGlobServiceInterface::class)->getMock();
+        return $copyGlobServiceInterface;
     }
 
     /**

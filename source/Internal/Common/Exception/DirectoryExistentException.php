@@ -6,6 +6,8 @@
 
 namespace OxidEsales\EshopCommunity\Internal\Common\Exception;
 
+use Throwable;
+
 /**
  * @internal
  *
@@ -15,11 +17,22 @@ class DirectoryExistentException extends \Exception
     /** @var string $directoryAlreadyExistent */
     private $directoryAlreadyExistent = '';
 
+
     /**
-     * @param string $directoryAlreadyExistent
+     * DirectoryExistentException constructor.
+     *
+     * @param string         $directoryAlreadyExistent
+     * @param string         $message
+     * @param int            $code
+     * @param Throwable|null $previous
      */
-    public function setDirectoryAlreadyExistent(string $directoryAlreadyExistent)
-    {
+    public function __construct(
+        string $directoryAlreadyExistent,
+        string $message = "",
+        int $code = 0,
+        Throwable $previous = null
+    ) {
+        parent::__construct($message, $code, $previous);
         $this->directoryAlreadyExistent = $directoryAlreadyExistent;
     }
 

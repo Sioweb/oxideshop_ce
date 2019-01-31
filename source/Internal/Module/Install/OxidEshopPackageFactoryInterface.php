@@ -6,17 +6,12 @@
 
 namespace OxidEsales\EshopCommunity\Internal\Module\Install;
 
-
 use OxidEsales\EshopCommunity\Internal\Module\Configuration\DataObject\OxidEshopPackage;
 
 /**
- * Class PackageService
- *
  * @internal
- *
- * @package OxidEsales\EshopCommunity\Internal\Module\Setup\Install
  */
-class PackageService implements PackageServiceInterface
+interface OxidEshopPackageFactoryInterface
 {
 
     /**
@@ -24,10 +19,5 @@ class PackageService implements PackageServiceInterface
      *
      * @return OxidEshopPackage
      */
-    public function getPackage(string $packagePath): OxidEshopPackage
-    {
-        $package = new OxidEshopPackage();
-        return $package;
-    }
-
+    public function getPackage(string $packagePath) : OxidEshopPackage;
 }

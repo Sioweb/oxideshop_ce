@@ -33,12 +33,12 @@ class ModuleCopyService implements ModuleCopyServiceInterface
     /**
      * ModuleCopyService constructor.
      *
-     * @param PackageServiceInterface  $packageService
-     * @param BasicContextInterface    $basicContext
-     * @param CopyGlobServiceInterface $copyGlobService
+     * @param OxidEshopPackageFactoryInterface $packageService
+     * @param BasicContextInterface            $basicContext
+     * @param CopyGlobServiceInterface         $copyGlobService
      */
     public function __construct(
-        PackageServiceInterface $packageService,
+        OxidEshopPackageFactoryInterface $packageService,
         BasicContextInterface $basicContext,
         CopyGlobServiceInterface $copyGlobService
     ) {
@@ -59,8 +59,7 @@ class ModuleCopyService implements ModuleCopyServiceInterface
         if ($this->isInstalled($packagePath)) {
             $package = $this->packageService->getPackage($packagePath);
 
-            $exception = new DirectoryExistentException();
-            $exception->setDirectoryAlreadyExistent($this->formTargetPath($package));
+            $exception = new DirectoryExistentException($this->formTargetPath($package));
             throw $exception;
         }
 
