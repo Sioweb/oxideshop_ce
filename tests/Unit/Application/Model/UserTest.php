@@ -518,6 +518,17 @@ class UserTest extends \OxidTestCase
         $this->assertEquals($sEncPass, $oUser->encodePassword($sPassword, $sSalt));
     }
 
+    public function testEncodePasswordIsDeterministic()
+    {
+        $password = 'secret';
+        $salt = 'salt';
+        $user = new User();
+        $hash_1 = $user->encodePassword($password, $salt);
+        $hash_2 = $user->encodePassword($password, $salt);
+
+        $this->assertSame($hash_1, $hash_2);
+    }
+
     public function testGetUpdateId()
     {
         $oUser = $this->getMock(\OxidEsales\Eshop\Application\Model\User::class, array('setUpdateKey'));

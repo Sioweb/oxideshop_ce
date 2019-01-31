@@ -8,7 +8,10 @@ namespace OxidEsales\EshopCommunity\Application\Model;
 
 use OxidEsales\Eshop\Core\Database\Adapter\DatabaseInterface;
 use OxidEsales\Eshop\Core\Field;
+use OxidEsales\Eshop\Core\PasswordHasher;
+use OxidEsales\Eshop\Core\PasswordSaltGenerator;
 use OxidEsales\Eshop\Core\Registry;
+use OxidEsales\EshopCommunity\Internal\Password\Bridge\PasswordServiceBridgeInterface;
 use oxUserException;
 
 /**
@@ -1247,6 +1250,35 @@ class User extends \OxidEsales\Eshop\Core\Model\BaseModel
     }
 
     /**
+     * @param string $user
+     * @param string $password
+     * @param string $shopId
+     * @param bool   $isAdmin
+     *
+     * @return string
+     */
+    protected function _getLoginQueryHashedWithSha512(string $user, string $password, string $shopId, bool $isAdmin): string
+    {
+        $database = \OxidEsales\Eshop\Core\DatabaseProvider::getDb();
+
+        $userSelect = "oxuser.oxusername = " . $database->quote($user);
+
+        $shopSelect = $this->formQueryPartForAdminView($shopId, $isAdmin);
+
+        $salt = $database->getOne("SELECT `oxpasssalt` FROM `oxuser` WHERE  " . $userSelect . $shopSelect);
+
+        $passwordServiceBridge = $this->getContainer()->get(PasswordServiceBridgeInterface::class);
+        $passwordHashService = $passwordServiceBridge->getPasswordHashService('sha512', []);
+        $passwordHash = $passwordHashService->hash($password . $salt);
+
+        $passSelect = " oxuser.oxpassword = " . $database->quote($passwordHash);
+
+        $select = "select `oxid` from oxuser where oxuser.oxactive = 1 and {$passSelect} and {$userSelect} {$shopSelect} ";
+
+        return $select;
+    }
+
+    /**
      * Builds and returns user login query
      *
      * @param string $sUser     login name
@@ -1863,43 +1895,43 @@ class User extends \OxidEsales\Eshop\Core\Model\BaseModel
     }
 
     /**
-     * Encodes and returns given password
+     * Returns a non-deterministic cryptographic hash for a given password
      *
-     * @param string $sPassword password to encode
-     * @param string $sSalt     any unique string value
+     * @param string $password password to encode
+     * @param string $salt     any unique string value
      *
      * @return string
      */
-    public function encodePassword($sPassword, $sSalt)
+    public function encodePassword($password, $salt)
     {
-        /** @var \OxidEsales\Eshop\Core\Sha512Hasher $oSha512Hasher */
-        $oSha512Hasher = oxNew(\OxidEsales\Eshop\Core\Sha512Hasher::class);
-        /** @var \OxidEsales\Eshop\Core\PasswordHasher $oHasher */
-        $oHasher = oxNew('oxPasswordHasher', $oSha512Hasher);
+        $passwordServiceBridge = $this->getContainer()->get(PasswordServiceBridgeInterface::class);
+        $passwordHashService = $passwordServiceBridge->getPasswordHashService('sha512', []);
 
-        return $oHasher->hash($sPassword, $sSalt);
+        $oHasher = oxNew(PasswordHasher::class, $passwordHashService);
+
+        return $oHasher->hash($password, $salt);
     }
 
     /**
      * Sets new password for user ( save is not called)
      *
-     * @param string $sPassword password
+     * @param string $password password
      */
-    public function setPassword($sPassword = null)
+    public function setPassword($password = null)
     {
-        /** @var \OxidEsales\Eshop\Core\OpenSSLFunctionalityChecker $oOpenSSLFunctionalityChecker */
-        $oOpenSSLFunctionalityChecker = oxNew(\OxidEsales\Eshop\Core\OpenSSLFunctionalityChecker::class);
+        /** @var \OxidEsales\Eshop\Core\OpenSSLFunctionalityChecker $openSSLFunctionalityChecker */
+        $openSSLFunctionalityChecker = oxNew(\OxidEsales\Eshop\Core\OpenSSLFunctionalityChecker::class);
         // setting salt if password is not empty
-        /** @var  oxPasswordSaltGenerator $oSaltGenerator */
-        $oSaltGenerator = oxNew('oxPasswordSaltGenerator', $oOpenSSLFunctionalityChecker);
+        /** @var  PasswordSaltGenerator $saltGenerator */
+        $saltGenerator = oxNew(PasswordSaltGenerator::class, $openSSLFunctionalityChecker);
 
-        $sSalt = $sPassword ? $oSaltGenerator->generate() : '';
+        $salt = $password ? $saltGenerator->generateStrongSalt() : '';
 
         // encoding only if password was not empty (e.g. user registration without pass)
-        $sPassword = $sPassword ? $this->encodePassword($sPassword, $sSalt) : '';
+        $password = $password ? $this->encodePassword($password, $salt) : '';
 
-        $this->oxuser__oxpassword = new \OxidEsales\Eshop\Core\Field($sPassword, \OxidEsales\Eshop\Core\Field::T_RAW);
-        $this->oxuser__oxpasssalt = new \OxidEsales\Eshop\Core\Field($sSalt, \OxidEsales\Eshop\Core\Field::T_RAW);
+        $this->oxuser__oxpassword = new \OxidEsales\Eshop\Core\Field($password, \OxidEsales\Eshop\Core\Field::T_RAW);
+        $this->oxuser__oxpasssalt = new \OxidEsales\Eshop\Core\Field($salt, \OxidEsales\Eshop\Core\Field::T_RAW);
     }
 
     /**
