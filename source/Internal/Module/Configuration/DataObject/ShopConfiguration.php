@@ -67,6 +67,15 @@ class ShopConfiguration
     }
 
     /**
+     * @param ModuleConfiguration $moduleConfiguration
+     * @return bool
+     */
+    public function hasModuleConfiguration(ModuleConfiguration $moduleConfiguration): bool
+    {
+        return array_key_exists($moduleConfiguration->getId(), $this->moduleConfigurations);
+    }
+
+    /**
      * @param string $moduleId
      *
      * @throws DomainException

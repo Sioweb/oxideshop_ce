@@ -96,4 +96,22 @@ class ShopConfigurationTest extends TestCase
         $this->expectException(DomainException::class);
         $this->shopConfiguration->getChain('fakeChainId');
     }
+
+    public function testHasModuleConfiguration()
+    {
+        $moduleConfiguration = new ModuleConfiguration();
+        $moduleConfiguration->setId('testId');
+
+        $shopConfiguration = new ShopConfiguration();
+
+        $this->assertFalse(
+            $shopConfiguration->hasModuleConfiguration($moduleConfiguration)
+        );
+
+        $shopConfiguration->addModuleConfiguration($moduleConfiguration);
+
+        $this->assertTrue(
+            $shopConfiguration->hasModuleConfiguration($moduleConfiguration)
+        );
+    }
 }
