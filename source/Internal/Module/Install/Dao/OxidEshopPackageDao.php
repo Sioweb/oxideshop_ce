@@ -6,7 +6,6 @@
 
 namespace OxidEsales\EshopCommunity\Internal\Module\Install\Dao;
 
-
 use OxidEsales\EshopCommunity\Internal\Module\Install\DataObject\OxidEshopPackage;
 
 /**
@@ -18,7 +17,6 @@ use OxidEsales\EshopCommunity\Internal\Module\Install\DataObject\OxidEshopPackag
  */
 class OxidEshopPackageDao implements OxidEshopPackageDaoInterface
 {
-
     /**
      * @param string $packagePath
      *
@@ -26,8 +24,7 @@ class OxidEshopPackageDao implements OxidEshopPackageDaoInterface
      */
     public function getPackage(string $packagePath): OxidEshopPackage
     {
-        $package = new OxidEshopPackage();
+        $package = new OxidEshopPackage('dummy', []);
         return $package;
     }
-
 }

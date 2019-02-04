@@ -7,47 +7,55 @@
 namespace OxidEsales\EshopCommunity\Internal\Module\Install\Service;
 
 use OxidEsales\EshopCommunity\Internal\Common\Exception\DirectoryExistentException;
-use OxidEsales\EshopCommunity\Internal\Module\Configuration\DataObject\OxidEshopPackage;
+use OxidEsales\EshopCommunity\Internal\Common\FileSystem\FinderFactoryInterface;
 use OxidEsales\EshopCommunity\Internal\Application\Utility\BasicContextInterface;
-use OxidEsales\EshopCommunity\Internal\Common\CopyGlob\CopyGlobServiceInterface;
+use OxidEsales\EshopCommunity\Internal\Module\Install\Dao\OxidEshopPackageDaoInterface;
+use OxidEsales\EshopCommunity\Internal\Module\Install\DataObject\OxidEshopPackage;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
 use Webmozart\PathUtil\Path;
 
 /**
  * Class ModuleFilesInstaller
  *
  * @internal
- *
- * @package OxidEsales\EshopCommunity\Internal\Module\Setup\Install
  */
 class ModuleFilesInstaller implements ModuleFilesInstallerInterface
 {
-    /** @var $packageService */
-    private $packageService;
+    /**
+     * @var OxidEshopPackageDaoInterface
+     */
+    private $packageDao;
 
     /** @var BasicContextInterface $context */
     private $context;
 
-    /** @var CopyGlobServiceInterface $fileSystemService */
+    /** @var Filesystem $fileSystemService */
     private $fileSystemService;
 
     /**
+     * @var FinderFactoryInterface
+     */
+    private $finderFactory;
+
+    /**
      * ModuleFilesInstaller constructor.
-     *
-     * @param OxidEshopPackageFactoryInterface $packageService
-     * @param BasicContextInterface            $basicContext
-     * @param Filesystem                       $fileSystemService
+     * @param OxidEshopPackageDaoInterface $packageDao
+     * @param BasicContextInterface        $context
+     * @param Filesystem                   $fileSystemService
+     * @param FinderFactoryInterface       $finderFactory
      */
     public function __construct(
-        OxidEshopPackageFactoryInterface $packageService,
-        BasicContextInterface $basicContext,
-        Filesystem $fileSystemService
+        OxidEshopPackageDaoInterface $packageDao,
+        BasicContextInterface $context,
+        Filesystem $fileSystemService,
+        FinderFactoryInterface $finderFactory
     ) {
-        $this->packageService = $packageService;
-        $this->context = $basicContext;
+        $this->packageDao = $packageDao;
+        $this->context = $context;
         $this->fileSystemService = $fileSystemService;
+        $this->finderFactory = $finderFactory;
     }
+
 
     /**
      * Copies from vendor directory to source/modules directory respecting the blacklist filters given by the module.
@@ -59,7 +67,7 @@ class ModuleFilesInstaller implements ModuleFilesInstallerInterface
     public function copy(string $packagePath)
     {
         if ($this->isInstalled($packagePath)) {
-            $package = $this->packageService->getPackage($packagePath);
+            $package = $this->packageDao->getPackage($packagePath);
             throw new DirectoryExistentException($this->getTargetPath($package));
         }
 
@@ -81,7 +89,7 @@ class ModuleFilesInstaller implements ModuleFilesInstallerInterface
      */
     private function isInstalled(string $packagePath): bool
     {
-        $package = $this->packageService->getPackage($packagePath);
+        $package = $this->packageDao->getPackage($packagePath);
         return file_exists($this->getTargetPath($package));
     }
 
@@ -90,11 +98,11 @@ class ModuleFilesInstaller implements ModuleFilesInstallerInterface
      */
     private function copyFiles(string $packagePath)
     {
-        $package = $this->packageService->getPackage($packagePath);
+        $package = $this->packageDao->getPackage($packagePath);
 
         $sourceDirectory = $this->getSourcePath($packagePath, $package);
 
-        $finder = new Finder();
+        $finder = $this->finderFactory->create();
         $finder
             ->in($sourceDirectory)
             ->notName($package->getBlackListFilters());

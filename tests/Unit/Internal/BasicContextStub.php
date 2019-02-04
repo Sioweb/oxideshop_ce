@@ -22,6 +22,7 @@ class BasicContextStub implements BasicContextInterface
     private $generatedProjectFilePath;
     private $professionalEditionRootPath;
     private $sourcePath;
+    private $modulesPath;
     
     public function __construct()
     {
@@ -33,6 +34,7 @@ class BasicContextStub implements BasicContextInterface
         $this->generatedProjectFilePath = $basicContext->getGeneratedProjectFilePath();
         $this->professionalEditionRootPath = $basicContext->getProfessionalEditionRootPath();
         $this->sourcePath = $basicContext->getSourcePath();
+        $this->modulesPath = $basicContext->getModulesPath();
     }
 
     /**
@@ -145,5 +147,13 @@ class BasicContextStub implements BasicContextInterface
     public function setSourcePath(string $sourcePath)
     {
         $this->sourcePath = $sourcePath;
+    }
+
+    /**
+     * @return string
+     */
+    public function getModulesPath(): string
+    {
+        return $this->modulesPath;
     }
 }

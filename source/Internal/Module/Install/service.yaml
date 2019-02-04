@@ -1,12 +1,12 @@
 services:
-  OxidEsales\EshopCommunity\Internal\Module\Install\ModuleCopyServiceInterface:
-    class: OxidEsales\EshopCommunity\Internal\Module\Install\ModuleCopyService
+  OxidEsales\EshopCommunity\Internal\Module\Install\Service\ModuleFilesInstallerInterface:
+    class: OxidEsales\EshopCommunity\Internal\Module\Install\Service\ModuleFilesInstaller
     arguments:
       $fileSystemService: '@oxid_esales.symfony.file_system'
     autowire: true
-  OxidEsales\EshopCommunity\Internal\Module\Install\OxidEshopPackageFactoryInterface:
-    class: OxidEsales\EshopCommunity\Internal\Module\Install\OxidEshopOxidEshopPackageFactory
+  OxidEsales\EshopCommunity\Internal\Module\Install\Dao\OxidEshopPackageDaoInterface:
+    class: OxidEsales\EshopCommunity\Internal\Module\Install\Dao\OxidEshopPackageDao
     autowire: true
-  OxidEsales\EshopCommunity\Internal\Module\Install\ModuleConfigurationInstallerInterface:
-    class: OxidEsales\EshopCommunity\Internal\Module\Install\ModuleConfigurationInstaller
+  OxidEsales\EshopCommunity\Internal\Module\Install\Service\ModuleConfigurationInstallerInterface:
+    class: OxidEsales\EshopCommunity\Internal\Module\Install\Service\ModuleConfigurationInstaller
     autowire: true
