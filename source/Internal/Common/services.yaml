@@ -33,3 +33,7 @@ services:
 
   oxid_esales.symfony.file_system:
     class: Symfony\Component\Filesystem\Filesystem
+
+  OxidEsales\EshopCommunity\Internal\Common\FileSystem\FinderFactoryInterface:
+    class: OxidEsales\EshopCommunity\Internal\Common\FileSystem\FinderFactory
+    autowire: true
