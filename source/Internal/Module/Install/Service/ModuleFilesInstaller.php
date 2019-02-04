@@ -4,7 +4,7 @@
  * See LICENSE file for license details.
  */
 
-namespace OxidEsales\EshopCommunity\Internal\Module\Install;
+namespace OxidEsales\EshopCommunity\Internal\Module\Install\Service;
 
 use OxidEsales\EshopCommunity\Internal\Common\Exception\DirectoryExistentException;
 use OxidEsales\EshopCommunity\Internal\Module\Configuration\DataObject\OxidEshopPackage;
@@ -15,13 +15,13 @@ use Symfony\Component\Finder\Finder;
 use Webmozart\PathUtil\Path;
 
 /**
- * Class ModuleCopyService
+ * Class ModuleFilesInstaller
  *
  * @internal
  *
  * @package OxidEsales\EshopCommunity\Internal\Module\Setup\Install
  */
-class ModuleCopyService implements ModuleCopyServiceInterface
+class ModuleFilesInstaller implements ModuleFilesInstallerInterface
 {
     /** @var $packageService */
     private $packageService;
@@ -33,7 +33,7 @@ class ModuleCopyService implements ModuleCopyServiceInterface
     private $fileSystemService;
 
     /**
-     * ModuleCopyService constructor.
+     * ModuleFilesInstaller constructor.
      *
      * @param OxidEshopPackageFactoryInterface $packageService
      * @param BasicContextInterface            $basicContext

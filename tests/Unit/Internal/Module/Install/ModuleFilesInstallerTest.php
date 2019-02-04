@@ -10,10 +10,10 @@ use org\bovigo\vfs\vfsStream;
 use OxidEsales\EshopCommunity\Internal\Common\CopyGlob\CopyGlobServiceInterface;
 use OxidEsales\EshopCommunity\Internal\Common\Exception\DirectoryExistentException;
 use OxidEsales\EshopCommunity\Internal\Module\Install\DataObject\OxidEshopPackage;
-use OxidEsales\EshopCommunity\Internal\Module\Install\ModuleCopyService;
+use OxidEsales\EshopCommunity\Internal\Module\Install\Service\ModuleFilesInstaller;
 use OxidEsales\EshopCommunity\Internal\Application\Utility\BasicContextInterface;
-use OxidEsales\EshopCommunity\Internal\Module\Install\OxidEshopPackageFactoryInterface;
-use OxidEsales\EshopCommunity\Internal\Module\Install\PackageServiceInterface;
+use OxidEsales\EshopCommunity\Internal\Module\Install\Dao\OxidEshopPackageDaoInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
@@ -21,7 +21,7 @@ use Symfony\Component\Finder\Finder;
 /**
  * @internal
  */
-class ModuleCopyServiceTest extends TestCase
+class ModuleFilesInstallerTest extends TestCase
 {
     public function testCopyDispatchesCallsToTheCopyGlobService()
     {
@@ -43,7 +43,7 @@ class ModuleCopyServiceTest extends TestCase
 
         vfsStream::setup();
         $context = $this->getContext();
-        $packageService = $this->getPackageService($packageName, $extra);
+        $oxidEshopPackageDao = $this->getOxidEshopPackageDao($packageName, $extra);
 
         $finder = new Finder();
 
@@ -58,8 +58,8 @@ class ModuleCopyServiceTest extends TestCase
                 ['override' => true]
             );
 
-        $moduleCopyService = new ModuleCopyService($packageService, $context, $fileSystem);
-        $moduleCopyService->copy($packagePath);
+        $moduleFilesInstaller = new ModuleFilesInstaller($oxidEshopPackageDao, $context, $fileSystem);
+        $moduleFilesInstaller->copy($packagePath);
     }
 
     public function testCopyThrowsExceptionIfTargetDirectoryAlreadyPresent()
@@ -80,16 +80,16 @@ class ModuleCopyServiceTest extends TestCase
         $packageName = 'myvendor/mymodule';
 
         $context = $this->getContext();
-        $packageService = $this->getPackageService($packageName, []);
+        $oxidEshopPackageDao = $this->getOxidEshopPackageDao($packageName, []);
         $copyGlobService = $this->getCopyGlobService();
 
         $this->expectException(\OxidEsales\EshopCommunity\Internal\Common\Exception\DirectoryExistentException::class);
 
-        $moduleCopyService = new ModuleCopyService($packageService, $context, $copyGlobService);
+        $moduleFilesInstaller = new ModuleFilesInstaller($oxidEshopPackageDao, $context, $copyGlobService);
 
         $this->expectException(\OxidEsales\EshopCommunity\Internal\Common\Exception\DirectoryExistentException::class);
         try {
-            $moduleCopyService->copy('pathDoesNotMatterHere');
+            $moduleFilesInstaller->copy('pathDoesNotMatterHere');
             $this->fail('Exception should be thrown when target directory is already present');
         } catch (DirectoryExistentException $exception) {
             $directory = $exception->getDirectoryAlreadyExistent();
@@ -102,22 +102,22 @@ class ModuleCopyServiceTest extends TestCase
      * @param string $packageName
      * @param array  $extraParameters
      *
-     * @return OxidEshopPackageFactoryInterface
+     * @return OxidEshopPackageDaoInterface|MockObject
      */
-    private function getPackageService(string $packageName, array $extraParameters = []) : OxidEshopPackageFactoryInterface
+    private function getOxidEshopPackageDao(string $packageName, array $extraParameters = [])
     {
         $package = new OxidEshopPackage($packageName, $extraParameters);
 
-        $packageService = $this->getMockBuilder(OxidEshopPackageFactoryInterface::class)->getMock();
-        $packageService->method('getPackage')->willReturn($package);
+        $oxidEshopPackageDao = $this->getMockBuilder(OxidEshopPackageDaoInterface::class)->getMock();
+        $oxidEshopPackageDao->method('getPackage')->willReturn($package);
 
-        return $packageService;
+        return $oxidEshopPackageDao;
     }
 
     /**
-     * @return BasicContextInterface
+     * @return BasicContextInterface|MockObject
      */
-    private function getContext() : BasicContextInterface
+    private function getContext()
     {
         $context = $this->getMockBuilder(BasicContextInterface::class)->getMock();
         $context->method('getModulesPath')->willReturn(vfsStream::url('root/source/modules'));
@@ -126,9 +126,9 @@ class ModuleCopyServiceTest extends TestCase
 
 
     /**
-     * @return BasicContextInterface
+     * @return BasicContextInterface|MockObject
      */
-    private function getCopyGlobService() : CopyGlobServiceInterface
+    private function getCopyGlobService()
     {
         $copyGlobServiceInterface = $this->getMockBuilder(CopyGlobServiceInterface::class)->getMock();
         return $copyGlobServiceInterface;
