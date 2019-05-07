@@ -1618,7 +1618,7 @@ class Basket extends \OxidEsales\Eshop\Core\Base
         // discount information
         // formatting discount value
         $this->aDiscounts = $this->getDiscounts();
-        if (is_array($this->aDiscounts) && count($this->aDiscounts) > 0) {
+        if (!empty($this->aDiscounts)) {
             $oLang = \OxidEsales\Eshop\Core\Registry::getLang();
             foreach ($this->aDiscounts as $oDiscount) {
                 $oDiscount->fDiscount = $oLang->formatCurrency($oDiscount->dDiscount, $this->getBasketCurrency());
