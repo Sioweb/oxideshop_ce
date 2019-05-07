@@ -960,7 +960,8 @@ class Email extends PHPMailer
             $homeUrl .= "su=" . $activeUser->getId();
         }
 
-        if (is_array($user->rec_email) && count($user->rec_email) > 0) {
+        /*if (is_array($user->rec_email) && count($user->rec_email) > 0) {*/
+        if (!empty($user->rec_email)) {
             foreach ($user->rec_email as $email) {
                 if (!empty($email)) {
                     $registerUrl = \OxidEsales\Eshop\Core\Registry::getUtilsUrl()->appendParamSeparator($homeUrl);
@@ -1406,7 +1407,8 @@ class Email extends PHPMailer
             $imageDir = $fileUtils->normalizeDir($imageDir);
             $imageDirNoSSL = $fileUtils->normalizeDir($imageDirNoSSL);
 
-            if (is_array($matches) && count($matches)) {
+            /*if (is_array($matches) && count($matches)) {*/
+            if (!empty($matches)) {
                 $imageCache = [];
                 $myUtils = \OxidEsales\Eshop\Core\Registry::getUtils();
                 $myUtilsObject = $this->getUtilsObjectInstance();

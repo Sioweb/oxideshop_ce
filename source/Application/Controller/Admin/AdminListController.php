@@ -302,7 +302,8 @@ class AdminListController extends \OxidEsales\Eshop\Application\Controller\Admin
         // sorting
         $sortFields = $this->getListSorting();
 
-        if (is_array($sortFields) && count($sortFields)) {
+        /*if (is_array($sortFields) && count($sortFields)) {*/
+        if (!empty($sortFields)) {
             // only add order by at full sql not for count(*)
             $query .= ' order by ';
             $addSeparator = false;
@@ -411,7 +412,8 @@ class AdminListController extends \OxidEsales\Eshop\Application\Controller\Admin
      */
     protected function _prepareWhereQuery($whereQuery, $fullQuery)
     {
-        if (is_array($whereQuery) && count($whereQuery)) {
+        /*if (is_array($whereQuery) && count($whereQuery)) {*/
+        if (!empty($whereQuery)) {
             $myUtilsString = \OxidEsales\Eshop\Core\Registry::getUtilsString();
             foreach ($whereQuery as $identifierName => $fieldValue) {
                 $fieldValue = trim($fieldValue);

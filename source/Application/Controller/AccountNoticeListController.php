@@ -130,7 +130,8 @@ class AccountNoticeListController extends \OxidEsales\Eshop\Application\Controll
             $this->_aSimilarRecommListIds = false;
 
             $aNoticeProdList = $this->getNoticeProductList();
-            if (is_array($aNoticeProdList) && count($aNoticeProdList)) {
+            /*if (is_array($aNoticeProdList) && count($aNoticeProdList)) {*/
+            if (!empty($aNoticeProdList)) {
                 $this->_aSimilarRecommListIds = array_keys($aNoticeProdList);
             }
         }

@@ -339,7 +339,8 @@ class VariantHandler extends \OxidEsales\Eshop\Core\Base
     protected function _cleanFilter($aFilter)
     {
         $aCleanFilter = false;
-        if (is_array($aFilter) && count($aFilter)) {
+        /*if (is_array($aFilter) && count($aFilter)) {*/
+        if (!empty($aFilter)) {
             foreach ($aFilter as $iKey => $sFilter) {
                 if ($sFilter) {
                     $aCleanFilter[$iKey] = $sFilter;

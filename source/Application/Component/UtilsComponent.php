@@ -70,7 +70,8 @@ class UtilsComponent extends \OxidEsales\Eshop\Core\Controller\BaseController
                 }
 
                 $aViewProds = $oParentView->getViewProductList();
-                if (is_array($aViewProds) && count($aViewProds)) {
+                /*if (is_array($aViewProds) && count($aViewProds)) {*/
+                if (!empty($aViewProds)) {
                     foreach ($aViewProds as $oProduct) {
                         if (isset($aItems[$oProduct->getId()])) {
                             $oProduct->setOnComparisonList(true);

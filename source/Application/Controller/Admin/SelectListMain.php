@@ -217,7 +217,8 @@ class SelectListMain extends \OxidEsales\Eshop\Application\Controller\Admin\Admi
             $aDelFields = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter("aFields");
             $this->aFieldArray = \OxidEsales\Eshop\Core\Registry::getUtils()->assignValuesFromText($oSelectlist->oxselectlist__oxvaldesc->getRawValue());
 
-            if (is_array($aDelFields) && count($aDelFields)) {
+            /*if (is_array($aDelFields) && count($aDelFields)) {*/
+            if (!empty($aDelFields)) {
                 foreach ($aDelFields as $sDelField) {
                     $sDel = $this->parseFieldName($sDelField);
                     foreach ($this->aFieldArray as $sKey => $oField) {
@@ -286,7 +287,8 @@ class SelectListMain extends \OxidEsales\Eshop\Application\Controller\Admin\Admi
         }
 
         $aChangeFields = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter("aFields");
-        if (is_array($aChangeFields) && count($aChangeFields)) {
+        /*if (is_array($aChangeFields) && count($aChangeFields)) {*/
+        if (!empty($aChangeFields)) {
             $oSelectlist = oxNew(\OxidEsales\Eshop\Application\Model\SelectList::class);
             if ($oSelectlist->loadInLang($this->_iEditLang, $this->getEditObjectId())) {
                 $this->aFieldArray = \OxidEsales\Eshop\Core\Registry::getUtils()->assignValuesFromText($oSelectlist->oxselectlist__oxvaldesc->getRawValue());

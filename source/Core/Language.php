@@ -820,7 +820,8 @@ class Language extends \OxidEsales\Eshop\Core\Base
     protected function _appendLangFile($aLangFiles, $sFullPath, $sFilePattern = "lang")
     {
         $aFiles = glob($sFullPath . "/*_{$sFilePattern}.php");
-        if (is_array($aFiles) && count($aFiles)) {
+        /*if (is_array($aFiles) && count($aFiles)) {*/
+        if (!empty($aFiles)) {
             foreach ($aFiles as $sFile) {
                 if (!strpos($sFile, 'cust_lang.php')) {
                     $aLangFiles[] = $sFile;

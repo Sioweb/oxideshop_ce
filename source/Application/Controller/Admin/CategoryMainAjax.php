@@ -234,7 +234,8 @@ class CategoryMainAjax extends \OxidEsales\Eshop\Application\Controller\Admin\Li
         }
 
         // adding
-        if (is_array($aArticles) && count($aArticles)) {
+        /*if (is_array($aArticles) && count($aArticles)) {*/
+        if (!empty($aArticles)) {
             $this->removeCategoryArticles($aArticles, $sCategoryID);
         }
 

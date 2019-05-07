@@ -612,7 +612,8 @@ class DynamicExportBaseController extends \OxidEsales\Eshop\Application\Controll
     protected function _getCatAdd($aChosenCat)
     {
         $sCatAdd = null;
-        if (is_array($aChosenCat) && count($aChosenCat)) {
+        /*if (is_array($aChosenCat) && count($aChosenCat)) {*/
+        if (!empty($aChosenCat)) {
             $oDB = \OxidEsales\Eshop\Core\DatabaseProvider::getDb();
             $sCatAdd = " and ( ";
             $blSep = false;
@@ -822,7 +823,8 @@ class DynamicExportBaseController extends \OxidEsales\Eshop\Application\Controll
 
         // find deepest
         $aIds = $oArticle->getCategoryIds();
-        if (is_array($aIds) && count($aIds)) {
+        /*if (is_array($aIds) && count($aIds)) {*/
+        if (!empty($aIds)) {
             if ($aCatLvlCache = $this->_loadRootCats()) {
                 $sIdMax = null;
                 $dMaxLvl = 0;

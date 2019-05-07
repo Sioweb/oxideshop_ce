@@ -79,7 +79,8 @@ class ModuleList extends \OxidEsales\Eshop\Core\Base
         }
 
         $aDisabledModules = $this->getDisabledModules();
-        if (is_array($aDisabledModules) && count($aDisabledModules) > 0 && count($aModulePaths) > 0) {
+        /*if (is_array($aDisabledModules) && count($aDisabledModules) > 0 && count($aModulePaths) > 0) {*/
+        if (!empty($aDisabledModules)) {
             $aModulePaths = array_diff_key($aModulePaths, array_flip($aDisabledModules));
         }
 
@@ -96,7 +97,8 @@ class ModuleList extends \OxidEsales\Eshop\Core\Base
         $aDisabledModules = $this->getDisabledModules();
         $aModulePaths = [];
 
-        if (is_array($aDisabledModules) && count($aDisabledModules) > 0) {
+        /*if (is_array($aDisabledModules) && count($aDisabledModules) > 0) {*/
+        if (!empty($aDisabledModules)) {
             $aModulePaths = $this->getModuleConfigParametersByKey(static::MODULE_KEY_PATHS);
 
             // Extract module paths from extended classes
@@ -175,7 +177,8 @@ class ModuleList extends \OxidEsales\Eshop\Core\Base
         $aModules = $this->getModulesWithExtendedClass();
         $aModulePaths = [];
 
-        if (is_array($aModules) && count($aModules) > 0) {
+        /*if (is_array($aModules) && count($aModules) > 0) {*/
+        if (!empty($aModules)) {
             foreach ($aModules as $aModuleClasses) {
                 foreach ($aModuleClasses as $sModule) {
                     $sModuleId = substr($sModule, 0, strpos($sModule, "/"));

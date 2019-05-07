@@ -339,7 +339,8 @@ class BasketComponent extends \OxidEsales\Eshop\Core\Controller\BaseController
             ];
         }
 
-        if (is_array($aProducts) && count($aProducts)) {
+        /*if (is_array($aProducts) && count($aProducts)) {*/
+        if (!empty($aProducts)) {
             if (\OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('removeBtn') !== null) {
                 //setting amount to 0 if removing article from basket
                 foreach ($aProducts as $sProductId => $aProduct) {

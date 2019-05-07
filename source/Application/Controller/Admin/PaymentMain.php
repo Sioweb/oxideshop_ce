@@ -173,7 +173,8 @@ class PaymentMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
             $aDelFields = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter("aFields");
             $this->_aFieldArray = \OxidEsales\Eshop\Core\Registry::getUtils()->assignValuesFromText($oPayment->oxpayments__oxvaldesc->value);
 
-            if (is_array($aDelFields) && count($aDelFields)) {
+            /*if (is_array($aDelFields) && count($aDelFields)) {*/
+            if (!empty($aDelFields)) {
                 foreach ($aDelFields as $sDelField) {
                     foreach ($this->_aFieldArray as $sKey => $oField) {
                         if ($oField->name == $sDelField) {

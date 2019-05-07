@@ -848,7 +848,8 @@ class Order extends \OxidEsales\Eshop\Core\Model\BaseModel
                 if (!is_array($aPersParams = $oProduct->getPersParams())) {
                     $aPersParams = $oContent->getPersParams();
                 }
-                if (is_array($aPersParams) && count($aPersParams)) {
+                /*if (is_array($aPersParams) && count($aPersParams)) {*/
+                if (!empty($aPersParams)) {
                     $oOrderArticle->oxorderarticles__oxpersparam = new \OxidEsales\Eshop\Core\Field(serialize($aPersParams), \OxidEsales\Eshop\Core\Field::T_RAW);
                 }
             }

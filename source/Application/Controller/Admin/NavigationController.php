@@ -64,14 +64,16 @@ class NavigationController extends \OxidEsales\Eshop\Application\Controller\Admi
             // favorite navigation
             $aFavorites = explode('|', $myUtilsServer->getOxCookie('oxidadminfavorites'));
 
-            if (is_array($aFavorites) && count($aFavorites)) {
+            /*if (is_array($aFavorites) && count($aFavorites)) {*/
+            if (!empty($aFavorites)) {
                 $this->_aViewData["menufavorites"] = $oNavTree->getListNodes($aFavorites);
                 $this->_aViewData["aFavorites"] = $aFavorites;
             }
 
             // history navigation
             $aHistory = explode('|', $myUtilsServer->getOxCookie('oxidadminhistory'));
-            if (is_array($aHistory) && count($aHistory)) {
+            /*if (is_array($aHistory) && count($aHistory)) {*/
+            if (!empty($aHistory)) {
                 $this->_aViewData["menuhistory"] = $oNavTree->getListNodes($aHistory);
             }
 

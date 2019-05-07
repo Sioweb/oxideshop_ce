@@ -278,7 +278,8 @@ class Voucher extends \OxidEsales\Eshop\Core\Model\BaseModel
      */
     protected function _isAvailableWithOtherSeries($aVouchers)
     {
-        if (is_array($aVouchers) && count($aVouchers)) {
+        /*if (is_array($aVouchers) && count($aVouchers)) {*/
+        if (!empty($aVouchers)) {
             $oSeries = $this->getSerie();
             $sIds = implode(',', \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->quoteArray(array_keys($aVouchers)));
             $blAvailable = true;

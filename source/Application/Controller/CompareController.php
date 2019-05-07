@@ -219,7 +219,8 @@ class CompareController extends \OxidEsales\Eshop\Application\Controller\Fronten
     {
         if ($this->_aCompItems === null) {
             $aItems = \OxidEsales\Eshop\Core\Registry::getSession()->getVariable('aFiltcompproducts');
-            if (is_array($aItems) && count($aItems)) {
+            /*if (is_array($aItems) && count($aItems)) {*/
+            if (!empty($aItems)) {
                 $this->_aCompItems = $aItems;
             }
         }

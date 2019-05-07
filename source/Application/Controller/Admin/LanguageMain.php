@@ -238,7 +238,8 @@ class LanguageMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminD
     protected function _updateAbbervation($sOldId, $sNewId)
     {
         foreach (array_keys($this->_aLangData) as $sTypeKey) {
-            if (is_array($this->_aLangData[$sTypeKey]) && count($this->_aLangData[$sTypeKey]) > 0) {
+            /*if (is_array($this->_aLangData[$sTypeKey]) && count($this->_aLangData[$sTypeKey]) > 0) {*/
+            if (!empty($this->_aLangData[$sTypeKey])) {
                 if ($sTypeKey == 'urls' || $sTypeKey == 'sslUrls') {
                     continue;
                 }

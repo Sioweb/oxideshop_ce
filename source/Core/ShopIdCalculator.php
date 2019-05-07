@@ -97,7 +97,8 @@ class ShopIdCalculator
 
                 if ($sVar == 'aLanguageURLs') {
                     $aUrls = unserialize($sURL);
-                    if (is_array($aUrls) && count($aUrls)) {
+                    /*if (is_array($aUrls) && count($aUrls)) {*/
+                    if (!empty($aUrls)) {
                         $aUrls = array_filter($aUrls);
                         $aUrls = array_fill_keys($aUrls, $iShp);
                         $aMap = array_merge($aMap, $aUrls);

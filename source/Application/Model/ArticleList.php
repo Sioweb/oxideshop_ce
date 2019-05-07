@@ -712,7 +712,8 @@ class ArticleList extends \OxidEsales\Eshop\Core\Model\ListModel
      */
     public function loadStockRemindProducts($aBasketContents)
     {
-        if (is_array($aBasketContents) && count($aBasketContents)) {
+        /*if (is_array($aBasketContents) && count($aBasketContents)) {*/
+        if (!empty($aBasketContents)) {
             $oDb = \OxidEsales\Eshop\Core\DatabaseProvider::getDb();
             foreach ($aBasketContents as $oBasketItem) {
                 $aArtIds[] = $oDb->quote($oBasketItem->getProductId());

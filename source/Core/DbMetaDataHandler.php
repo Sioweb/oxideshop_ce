@@ -449,7 +449,8 @@ class DbMetaDataHandler extends \OxidEsales\Eshop\Core\Base
         $sql = [];
 
         $fields = $this->getMultilangFields($tableName);
-        if (is_array($fields) && count($fields) > 0) {
+        /*if (is_array($fields) && count($fields) > 0) {*/
+        if (!empty($fields)) {
             foreach ($fields as $fieldName) {
                 $fieldName = $fieldName . "_" . $langId;
 
@@ -638,7 +639,8 @@ class DbMetaDataHandler extends \OxidEsales\Eshop\Core\Base
             $sql[] = $this->_getCreateTableSetSql($table, $languageId);
         }
 
-        if (is_array($fields) && count($fields) > 0) {
+        /*if (is_array($fields) && count($fields) > 0) {*/
+        if (!empty($fields)) {
             foreach ($fields as $field) {
                 $newFieldName = $field . "_" . $languageId;
                 if ($languageId > 1) {

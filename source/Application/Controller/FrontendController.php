@@ -978,7 +978,8 @@ class FrontendController extends \OxidEsales\Eshop\Core\Controller\BaseControlle
         //if column is with table name split it
         $columns = explode('.', $this->_sListOrderBy);
 
-        if (is_array($columns) && count($columns) > 1) {
+        /*if (is_array($columns) && count($columns) > 1) {*/
+        if (!empty($columns)) {
             return $columns[1];
         }
 

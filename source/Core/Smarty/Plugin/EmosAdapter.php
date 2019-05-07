@@ -614,7 +614,8 @@ class EmosAdapter extends \OxidEsales\Eshop\Core\Base
         }
 
         // ADD To Basket and Remove from Basket
-        if (is_array($aLastCall) && count($aLastCall)) {
+        /*if (is_array($aLastCall) && count($aLastCall)) {*/
+        if (!empty($aLastCall)) {
             $sCallAction = key($aLastCall);
             $aCallData = current($aLastCall);
 

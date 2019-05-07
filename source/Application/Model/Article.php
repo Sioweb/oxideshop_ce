@@ -3970,7 +3970,8 @@ class Article extends \OxidEsales\Eshop\Core\Model\MultiLanguageModel implements
         }
         $sAttributeSql = '';
         $aAttributeIds = $oDb->getCol($sSelect);
-        if (is_array($aAttributeIds) && count($aAttributeIds)) {
+        /*if (is_array($aAttributeIds) && count($aAttributeIds)) {*/
+        if (!empty($aAttributeIds)) {
             $aAttributeIds = array_unique($aAttributeIds);
             $iCnt = count($aAttributeIds);
             $sAttributeSql .= 't1.oxattrid IN ( ' . implode(',', $oDb->quoteArray($aAttributeIds)) . ') ';

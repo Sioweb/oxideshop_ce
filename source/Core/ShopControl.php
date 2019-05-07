@@ -425,7 +425,8 @@ class ShopControl extends \OxidEsales\Eshop\Core\Base
     {
         $errors = $this->_getErrors($controllerName);
         $formattedErrors = [];
-        if (is_array($errors) && count($errors)) {
+        /*if (is_array($errors) && count($errors)) {*/
+        if (!empty($errors)) {
             foreach ($errors as $location => $ex2) {
                 foreach ($ex2 as $key => $er) {
                     $error = unserialize($er);
@@ -474,7 +475,8 @@ class ShopControl extends \OxidEsales\Eshop\Core\Base
 
         //add all exceptions to display
         $errors = $this->_getErrors($view->getClassName());
-        if (is_array($errors) && count($errors)) {
+        /*if (is_array($errors) && count($errors)) {*/
+        if (!empty($errors)) {
             \OxidEsales\Eshop\Core\Registry::getUtilsView()->passAllErrorsToView($viewData, $errors);
         }
 

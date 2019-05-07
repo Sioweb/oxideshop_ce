@@ -355,7 +355,8 @@ class ListComponentAjax extends \OxidEsales\Eshop\Core\Base
         $sQ = '';
         $oConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
         $aFilter = $oConfig->getRequestParameter('aFilter');
-        if (is_array($aFilter) && count($aFilter)) {
+        /*if (is_array($aFilter) && count($aFilter)) {*/
+        if (!empty($aFilter)) {
             $aCols = $this->_getVisibleColNames();
             $oDb = \OxidEsales\Eshop\Core\DatabaseProvider::getDb();
             $oStr = getStr();

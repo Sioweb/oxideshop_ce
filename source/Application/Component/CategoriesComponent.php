@@ -264,7 +264,8 @@ class CategoriesComponent extends \OxidEsales\Eshop\Core\Controller\BaseControll
     {
         $sListType = null;
         $aArticleCats = $oProduct->getCategoryIds(true);
-        if (is_array($aArticleCats) && count($aArticleCats)) {
+        /*if (is_array($aArticleCats) && count($aArticleCats)) {*/
+        if (!empty($aArticleCats)) {
             $sActCat = reset($aArticleCats);
         } elseif (($sActCat = $oProduct->getManufacturerId())) {
             // not assigned to any category ? maybe it is assigned to Manufacturer ?

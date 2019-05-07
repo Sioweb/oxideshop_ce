@@ -118,7 +118,8 @@ class WrappingController extends \OxidEsales\Eshop\Application\Controller\Fronte
         if ($this->getViewConfig()->getShowGiftWrapping()) {
             $oBasket = $this->getSession()->getBasket();
             // setting wrapping info
-            if (is_array($aWrapping) && count($aWrapping)) {
+            /*if (is_array($aWrapping) && count($aWrapping)) {*/
+            if (!empty($aWrapping)) {
                 foreach ($oBasket->getContents() as $sKey => $oBasketItem) {
                     // wrapping ?
                     if (isset($aWrapping[$sKey])) {

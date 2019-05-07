@@ -382,7 +382,8 @@ class BasketController extends \OxidEsales\Eshop\Application\Controller\Frontend
      */
     protected function _setWrappingInfo($oBasket, $aWrapping)
     {
-        if (is_array($aWrapping) && count($aWrapping)) {
+        /*if (is_array($aWrapping) && count($aWrapping)) {*/
+        if (!empty($aWrapping)) {
             foreach ($oBasket->getContents() as $sKey => $oBasketItem) {
                 if (isset($aWrapping[$sKey])) {
                     $oBasketItem->setWrapping($aWrapping[$sKey]);

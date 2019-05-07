@@ -1197,7 +1197,8 @@ class User extends \OxidEsales\Eshop\Core\Model\BaseModel
      */
     protected function _assignAddress($aDelAddress)
     {
-        if (is_array($aDelAddress) && count($aDelAddress)) {
+        /*if (is_array($aDelAddress) && count($aDelAddress)) {*/
+        if (!empty($aDelAddress)) {
             $sAddressId = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('oxaddressid');
             $sAddressId = ($sAddressId === null || $sAddressId == -1 || $sAddressId == -2) ? null : $sAddressId;
 
