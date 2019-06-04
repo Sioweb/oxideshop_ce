@@ -43,6 +43,7 @@ class SelectListMain extends \OxidEsales\Eshop\Application\Controller\Admin\Admi
         parent::render();
 
         $sOxId = $this->_aViewData["oxid"] = $this->getEditObjectId();
+        $sArticleTable = getViewName('oxarticles');
 
         //create empty edit object
         $this->_aViewData["edit"] = oxNew(\OxidEsales\Eshop\Application\Model\SelectList::class);
@@ -217,7 +218,8 @@ class SelectListMain extends \OxidEsales\Eshop\Application\Controller\Admin\Admi
             $aDelFields = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter("aFields");
             $this->aFieldArray = \OxidEsales\Eshop\Core\Registry::getUtils()->assignValuesFromText($oSelectlist->oxselectlist__oxvaldesc->getRawValue());
 
-            /*if (is_array($aDelFields) && count($aDelFields)) {*/
+            /** replace-in_array&count */
+            /** if (is_array($aDelFields) && count($aDelFields)) { */
             if (!empty($aDelFields)) {
                 foreach ($aDelFields as $sDelField) {
                     $sDel = $this->parseFieldName($sDelField);
@@ -287,7 +289,8 @@ class SelectListMain extends \OxidEsales\Eshop\Application\Controller\Admin\Admi
         }
 
         $aChangeFields = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter("aFields");
-        /*if (is_array($aChangeFields) && count($aChangeFields)) {*/
+        /** replace-in_array&count */
+        /** if (is_array($aChangeFields) && count($aChangeFields)) { */
         if (!empty($aChangeFields)) {
             $oSelectlist = oxNew(\OxidEsales\Eshop\Application\Model\SelectList::class);
             if ($oSelectlist->loadInLang($this->_iEditLang, $this->getEditObjectId())) {

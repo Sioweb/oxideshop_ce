@@ -118,7 +118,7 @@ class DynamicExportBaseController extends \OxidEsales\Eshop\Application\Controll
         parent::__construct();
 
         // set generic frame template
-        $this->_sFilePath = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('sShopDir') . "/" . $this->sExportPath . $this->sExportFileName . "." . $this->sExportFileType;
+        $this->_sFilePath = $this->getConfig()->getConfigParam('sShopDir') . "/" . $this->sExportPath . $this->sExportFileName . "." . $this->sExportFileType;
     }
 
     /**
@@ -138,7 +138,7 @@ class DynamicExportBaseController extends \OxidEsales\Eshop\Application\Controll
         }
 
         $this->_aViewData['sOutputFile'] = $this->_sFilePath;
-        $this->_aViewData['sDownloadFile'] = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('sShopURL') . $this->sExportPath . $this->sExportFileName . "." . $this->sExportFileType;
+        $this->_aViewData['sDownloadFile'] = $this->getConfig()->getConfigParam('sShopURL') . $this->sExportPath . $this->sExportFileName . "." . $this->sExportFileType;
 
         return $this->_sThisTemplate;
     }
@@ -489,7 +489,7 @@ class DynamicExportBaseController extends \OxidEsales\Eshop\Application\Controll
      */
     public function getOneArticle($iCnt, & $blContinue)
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         //[Alfonsas 2006-05-31] setting specific parameter
         //to be checked in oxarticle.php init() method
@@ -612,7 +612,8 @@ class DynamicExportBaseController extends \OxidEsales\Eshop\Application\Controll
     protected function _getCatAdd($aChosenCat)
     {
         $sCatAdd = null;
-        /*if (is_array($aChosenCat) && count($aChosenCat)) {*/
+        /** replace-in_array&count */
+        /** if (is_array($aChosenCat) && count($aChosenCat)) { */
         if (!empty($aChosenCat)) {
             $oDB = \OxidEsales\Eshop\Core\DatabaseProvider::getDb();
             $sCatAdd = " and ( ";
@@ -674,7 +675,7 @@ class DynamicExportBaseController extends \OxidEsales\Eshop\Application\Controll
         }
 
         // add minimum stock value
-        if (\OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blUseStock') && ($dMinStock = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter("sExportMinStock"))) {
+        if ($this->getConfig()->getConfigParam('blUseStock') && ($dMinStock = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter("sExportMinStock"))) {
             $dMinStock = str_replace([";", " ", "/", "'"], "", $dMinStock);
             $insertQuery .= " and {$sArticleTable}.oxstock >= " . $oDB->quote($dMinStock);
         }
@@ -823,7 +824,8 @@ class DynamicExportBaseController extends \OxidEsales\Eshop\Application\Controll
 
         // find deepest
         $aIds = $oArticle->getCategoryIds();
-        /*if (is_array($aIds) && count($aIds)) {*/
+        /** replace-in_array&count */
+        /** if (is_array($aIds) && count($aIds)) { */
         if (!empty($aIds)) {
             if ($aCatLvlCache = $this->_loadRootCats()) {
                 $sIdMax = null;

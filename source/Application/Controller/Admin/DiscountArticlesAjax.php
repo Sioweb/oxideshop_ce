@@ -58,7 +58,7 @@ class DiscountArticlesAjax extends \OxidEsales\Eshop\Application\Controller\Admi
      */
     protected function _getQuery()
     {
-        $oConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $oConfig = $this->getConfig();
 
         $sArticleTable = $this->_getViewName('oxarticles');
         $sO2CView = $this->_getViewName('oxobject2category');
@@ -109,7 +109,7 @@ class DiscountArticlesAjax extends \OxidEsales\Eshop\Application\Controller\Admi
     {
         $aChosenArt = $this->_getActionIds('oxobject2discount.oxid');
 
-        if (\OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('all')) {
+        if ($this->getConfig()->getRequestParameter('all')) {
             $sQ = parent::_addFilter("delete oxobject2discount.* " . $this->_getQuery());
             \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->execute($sQ);
         } elseif (is_array($aChosenArt)) {
@@ -123,7 +123,7 @@ class DiscountArticlesAjax extends \OxidEsales\Eshop\Application\Controller\Admi
      */
     public function addDiscArt()
     {
-        $config = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $config = $this->getConfig();
         $articleIds = $this->_getActionIds('oxarticles.oxid');
         $discountListId = $config->getRequestParameter('synchoxid');
 

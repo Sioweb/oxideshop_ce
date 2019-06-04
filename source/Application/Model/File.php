@@ -92,7 +92,7 @@ class File extends \OxidEsales\Eshop\Core\Model\BaseModel
      */
     public function processFile($sFileIndex)
     {
-        $aFileInfo = \OxidEsales\Eshop\Core\Registry::getConfig()->getUploadedFile($sFileIndex);
+        $aFileInfo = $this->getConfig()->getUploadedFile($sFileIndex);
 
         $this->_checkArticleFile($aFileInfo);
 
@@ -198,7 +198,7 @@ class File extends \OxidEsales\Eshop\Core\Model\BaseModel
         $sFileName = $this->oxfiles__oxfilename->value;
 
         //security check for demo shops
-        if (\OxidEsales\Eshop\Core\Registry::getConfig()->isDemoShop()) {
+        if ($this->getConfig()->isDemoShop()) {
             $sFileName = basename($sFileName);
         }
 
@@ -415,7 +415,7 @@ class File extends \OxidEsales\Eshop\Core\Model\BaseModel
         $iMaxCount = $this->oxfiles__oxmaxdownloads->value;
         //if value is -1, takes global options
         if ($iMaxCount < 0) {
-            $iMaxCount = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam("iMaxDownloadsCount");
+            $iMaxCount = $this->getConfig()->getConfigParam("iMaxDownloadsCount");
         }
 
         return $iMaxCount;
@@ -431,7 +431,7 @@ class File extends \OxidEsales\Eshop\Core\Model\BaseModel
         $iMaxCount = $this->oxfiles__oxmaxunregdownloads->value;
         //if value is -1, takes global options
         if ($iMaxCount < 0) {
-            $iMaxCount = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam("iMaxDownloadsCountUnregistered");
+            $iMaxCount = $this->getConfig()->getConfigParam("iMaxDownloadsCountUnregistered");
         }
 
         return $iMaxCount;
@@ -447,7 +447,7 @@ class File extends \OxidEsales\Eshop\Core\Model\BaseModel
         $iExpTime = $this->oxfiles__oxlinkexptime->value;
         //if value is -1, takes global options
         if ($iExpTime < 0) {
-            $iExpTime = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam("iLinkExpirationTime");
+            $iExpTime = $this->getConfig()->getConfigParam("iLinkExpirationTime");
         }
 
         return $iExpTime;
@@ -463,7 +463,7 @@ class File extends \OxidEsales\Eshop\Core\Model\BaseModel
         $iExpTime = $this->oxfiles__oxdownloadexptime->value;
         //if value is -1, takes global options
         if ($iExpTime < 0) {
-            $iExpTime = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam("iDownloadExpirationTime");
+            $iExpTime = $this->getConfig()->getConfigParam("iDownloadExpirationTime");
         }
 
         return $iExpTime;

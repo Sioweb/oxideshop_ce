@@ -5,8 +5,11 @@
  */
 namespace OxidEsales\EshopCommunity\Application\Controller;
 
+use oxArticle;
 use oxArticleList;
-use OxidEsales\Eshop\Core\Registry;
+use oxCategory;
+use oxField;
+use oxRegistry;
 
 /**
  * List of articles for a selected product group.
@@ -165,7 +168,7 @@ class ArticleListController extends \OxidEsales\Eshop\Application\Controller\Fro
      */
     public function render()
     {
-        $config = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $config = $this->getConfig();
 
         $category = $this->getCategoryToRender();
 
@@ -208,7 +211,7 @@ class ArticleListController extends \OxidEsales\Eshop\Application\Controller\Fro
      */
     protected function getCategoryToRender()
     {
-        $config = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $config = $this->getConfig();
 
         $this->_blIsCat = false;
 
@@ -343,18 +346,6 @@ class ArticleListController extends \OxidEsales\Eshop\Application\Controller\Fro
     }
 
     /**
-     * Reset filter.
-     */
-    public function resetFilter()
-    {
-        $activeCategory = Registry::getConfig()->getRequestParameter('cnid');
-        $sessionFilter = Registry::getSession()->getVariable('session_attrfilter');
-
-        unset($sessionFilter[$activeCategory]);
-        Registry::getSession()->setVariable('session_attrfilter', $sessionFilter);
-    }
-
-    /**
      * Loads and returns article list of active category.
      *
      * @param \OxidEsales\Eshop\Application\Model\Category $category category object
@@ -363,7 +354,7 @@ class ArticleListController extends \OxidEsales\Eshop\Application\Controller\Fro
      */
     protected function _loadArticles($category)
     {
-        $config = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $config = $this->getConfig();
 
         $numberOfCategoryArticles = (int) $config->getConfigParam('iNrofCatArticles');
         $numberOfCategoryArticles = $numberOfCategoryArticles ? $numberOfCategoryArticles : 1;
@@ -497,7 +488,7 @@ class ArticleListController extends \OxidEsales\Eshop\Application\Controller\Fro
 
         // and final component ..
         //changed for #2776
-        if (($suffix = \OxidEsales\Eshop\Core\Registry::getConfig()->getActiveShop()->oxshops__oxtitleprefix->value)) {
+        if (($suffix = $this->getConfig()->getActiveShop()->oxshops__oxtitleprefix->value)) {
             $description .= " {$suffix}";
         }
 
@@ -753,7 +744,7 @@ class ArticleListController extends \OxidEsales\Eshop\Application\Controller\Fro
     public function getTitleSuffix()
     {
         if ($this->getActiveCategory()->oxcategories__oxshowsuffix->value) {
-            return \OxidEsales\Eshop\Core\Registry::getConfig()->getActiveShop()->oxshops__oxtitlesuffix->value;
+            return $this->getConfig()->getActiveShop()->oxshops__oxtitlesuffix->value;
         }
     }
 
@@ -999,7 +990,7 @@ class ArticleListController extends \OxidEsales\Eshop\Application\Controller\Fro
     {
         if ($this->_aBargainArticleList === null) {
             $this->_aBargainArticleList = [];
-            if (\OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('bl_perfLoadAktion') && $this->_isActCategory()) {
+            if ($this->getConfig()->getConfigParam('bl_perfLoadAktion') && $this->_isActCategory()) {
                 $articleList = oxNew(\OxidEsales\Eshop\Application\Model\ArticleList::class);
                 $articleList->loadActionArticles('OXBARGAIN');
                 if ($articleList->count()) {
@@ -1059,7 +1050,7 @@ class ArticleListController extends \OxidEsales\Eshop\Application\Controller\Fro
      */
     public function canSelectDisplayType()
     {
-        return \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blShowListDisplayType');
+        return $this->getConfig()->getConfigParam('blShowListDisplayType');
     }
 
     /**

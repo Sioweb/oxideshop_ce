@@ -64,7 +64,8 @@ class NavigationController extends \OxidEsales\Eshop\Application\Controller\Admi
             // favorite navigation
             $aFavorites = explode('|', $myUtilsServer->getOxCookie('oxidadminfavorites'));
 
-            /*if (is_array($aFavorites) && count($aFavorites)) {*/
+            /** replace-in_array&count */
+            /** if (is_array($aFavorites) && count($aFavorites)) { */
             if (!empty($aFavorites)) {
                 $this->_aViewData["menufavorites"] = $oNavTree->getListNodes($aFavorites);
                 $this->_aViewData["aFavorites"] = $aFavorites;
@@ -72,7 +73,8 @@ class NavigationController extends \OxidEsales\Eshop\Application\Controller\Admi
 
             // history navigation
             $aHistory = explode('|', $myUtilsServer->getOxCookie('oxidadminhistory'));
-            /*if (is_array($aHistory) && count($aHistory)) {*/
+            /** replace-in_array&count */
+            /** if (is_array($aHistory) && count($aHistory)) { */
             if (!empty($aHistory)) {
                 $this->_aViewData["menuhistory"] = $oNavTree->getListNodes($aHistory);
             }
@@ -117,7 +119,7 @@ class NavigationController extends \OxidEsales\Eshop\Application\Controller\Admi
     public function logout()
     {
         $mySession = $this->getSession();
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         $oUser = oxNew(\OxidEsales\Eshop\Application\Model\User::class);
         $oUser->logout();
@@ -157,7 +159,7 @@ class NavigationController extends \OxidEsales\Eshop\Application\Controller\Admi
     {
         $aMessage = [];
 
-        if (\OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blCheckSysReq') !== false) {
+        if ($this->getConfig()->getConfigParam('blCheckSysReq') !== false) {
             // check if system reguirements are ok
             $oSysReq = new \OxidEsales\Eshop\Core\SystemRequirements();
             if (!$oSysReq->getSysReqStatus()) {
@@ -172,7 +174,7 @@ class NavigationController extends \OxidEsales\Eshop\Application\Controller\Admi
         }
 
         // version check
-        if (\OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blCheckForUpdates')) {
+        if ($this->getConfig()->getConfigParam('blCheckForUpdates')) {
             if ($sVersionNotice = $this->_checkVersion()) {
                 $aMessage['message'] .= $sVersionNotice;
             }
@@ -180,18 +182,18 @@ class NavigationController extends \OxidEsales\Eshop\Application\Controller\Admi
 
 
         // check if setup dir is deleted
-        if (file_exists(\OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('sShopDir') . '/Setup/index.php')) {
+        if (file_exists($this->getConfig()->getConfigParam('sShopDir') . '/Setup/index.php')) {
             $aMessage['warning'] .= ((!empty($aMessage['warning'])) ? "<br>" : '') . \OxidEsales\Eshop\Core\Registry::getLang()->translateString('SETUP_DIRNOTDELETED_WARNING');
         }
 
         // check if updateApp dir is deleted or empty
-        $sUpdateDir = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('sShopDir') . '/updateApp/';
+        $sUpdateDir = $this->getConfig()->getConfigParam('sShopDir') . '/updateApp/';
         if (file_exists($sUpdateDir) && !(count(glob("$sUpdateDir/*")) === 0)) {
             $aMessage['warning'] .= ((!empty($aMessage['warning'])) ? "<br>" : '') . \OxidEsales\Eshop\Core\Registry::getLang()->translateString('UPDATEAPP_DIRNOTDELETED_WARNING');
         }
 
         // check if config file is writable
-        $sConfPath = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('sShopDir') . "/config.inc.php";
+        $sConfPath = $this->getConfig()->getConfigParam('sShopDir') . "/config.inc.php";
         if (!is_readable($sConfPath) || is_writable($sConfPath)) {
             $aMessage['warning'] .= ((!empty($aMessage['warning'])) ? "<br>" : '') . \OxidEsales\Eshop\Core\Registry::getLang()->translateString('SETUP_CONFIGPERMISSIONS_WARNING');
         }
@@ -206,11 +208,11 @@ class NavigationController extends \OxidEsales\Eshop\Application\Controller\Admi
      */
     protected function _checkVersion()
     {
-        $edition = \OxidEsales\Eshop\Core\Registry::getConfig()->getEdition();
+        $edition = $this->getConfig()->getEdition();
         $query = 'http://admin.oxid-esales.com/' . $edition . '/onlinecheck.php?getlatestversion';
         if ($version = \OxidEsales\Eshop\Core\Registry::getUtilsFile()->readRemoteFileAsString($query)) {
             // current version is older ..
-            if (version_compare(\OxidEsales\Eshop\Core\Registry::getConfig()->getVersion(), $version) == '-1') {
+            if (version_compare($this->getConfig()->getVersion(), $version) == '-1') {
                 return sprintf(\OxidEsales\Eshop\Core\Registry::getLang()->translateString('NAVIGATION_NEWVERSIONAVAILABLE'), $version);
             }
         }

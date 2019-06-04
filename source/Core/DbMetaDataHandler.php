@@ -449,7 +449,8 @@ class DbMetaDataHandler extends \OxidEsales\Eshop\Core\Base
         $sql = [];
 
         $fields = $this->getMultilangFields($tableName);
-        /*if (is_array($fields) && count($fields) > 0) {*/
+        /** replace-in_array&count */
+        /** if (is_array($fields) && count($fields) > 0) { */
         if (!empty($fields)) {
             foreach ($fields as $fieldName) {
                 $fieldName = $fieldName . "_" . $langId;
@@ -605,7 +606,7 @@ class DbMetaDataHandler extends \OxidEsales\Eshop\Core\Base
     protected function safeGuardAdditionalMultiLanguageTables()
     {
         $maxLang = $this->getCurrentMaxLangId();
-        $multiLanguageTables = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aMultiLangTables');
+        $multiLanguageTables = $this->getConfig()->getConfigParam('aMultiLangTables');
 
         if (!is_array($multiLanguageTables) || empty($multiLanguageTables)) {
             return; //nothing to do
@@ -639,7 +640,8 @@ class DbMetaDataHandler extends \OxidEsales\Eshop\Core\Base
             $sql[] = $this->_getCreateTableSetSql($table, $languageId);
         }
 
-        /*if (is_array($fields) && count($fields) > 0) {*/
+        /** replace-in_array&count */
+        /** if (is_array($fields) && count($fields) > 0) { */
         if (!empty($fields)) {
             foreach ($fields as $field) {
                 $newFieldName = $field . "_" . $languageId;

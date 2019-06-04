@@ -335,7 +335,7 @@ class StrRegular
             $blWasOne = false;
             $blNumerical = true;
             reset($data);
-            while ($blNumerical && $key = key($data)) {
+            while ($blNumerical && (list($key) = each($data))) {
                 $blNumerical = !is_string($key);
             }
             if ($blNumerical) {

@@ -276,7 +276,7 @@ class ListModel extends \OxidEsales\Eshop\Core\Base implements \ArrayAccess, \It
      */
     public function __construct($sObjectName = null)
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
         $this->_aSqlLimit[0] = 0;
         $this->_aSqlLimit[1] = 0;
         $this->_sShopID = $myConfig->getShopId();

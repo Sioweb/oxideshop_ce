@@ -157,7 +157,7 @@ class AdminListController extends \OxidEsales\Eshop\Application\Controller\Admin
     protected function _getViewListSize()
     {
         if (!$this->_iViewListSize) {
-            $config = \OxidEsales\Eshop\Core\Registry::getConfig();
+            $config = $this->getConfig();
             if ($profile = \OxidEsales\Eshop\Core\Registry::getSession()->getVariable('profile')) {
                 if (isset($profile[1])) {
                     $config->setConfigParam('iAdminListSize', (int)$profile[1]);
@@ -302,7 +302,8 @@ class AdminListController extends \OxidEsales\Eshop\Application\Controller\Admin
         // sorting
         $sortFields = $this->getListSorting();
 
-        /*if (is_array($sortFields) && count($sortFields)) {*/
+        /** replace-in_array&count */
+        /** if (is_array($sortFields) && count($sortFields)) { */
         if (!empty($sortFields)) {
             // only add order by at full sql not for count(*)
             $query .= ' order by ';
@@ -412,8 +413,7 @@ class AdminListController extends \OxidEsales\Eshop\Application\Controller\Admin
      */
     protected function _prepareWhereQuery($whereQuery, $fullQuery)
     {
-        /*if (is_array($whereQuery) && count($whereQuery)) {*/
-        if (!empty($whereQuery)) {
+        if (count($whereQuery)) {
             $myUtilsString = \OxidEsales\Eshop\Core\Registry::getUtilsString();
             foreach ($whereQuery as $identifierName => $fieldValue) {
                 $fieldValue = trim($fieldValue);
@@ -488,7 +488,7 @@ class AdminListController extends \OxidEsales\Eshop\Application\Controller\Admin
             if (is_array($filter)) {
                 $listItem = $this->getItemListBaseObject();
                 $languageId = $listItem->isMultilang() ? $listItem->getLanguage() : \OxidEsales\Eshop\Core\Registry::getLang()->getBaseLanguage();
-                $localDateFormat = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('sLocalDateFormat');
+                $localDateFormat = $this->getConfig()->getConfigParam('sLocalDateFormat');
 
                 foreach ($filter as $table => $filterData) {
                     foreach ($filterData as $name => $value) {
@@ -766,7 +766,7 @@ class AdminListController extends \OxidEsales\Eshop\Application\Controller\Admin
 
             \OxidEsales\Eshop\Core\Registry::getSession()->setVariable('tabelle', $this->_sListClass);
             $this->_aViewData['listTable'] = getViewName($listObject->getCoreTableName());
-            \OxidEsales\Eshop\Core\Registry::getConfig()->setGlobalParameter('ListCoreTable', $listObject->getCoreTableName());
+            $this->getConfig()->setGlobalParameter('ListCoreTable', $listObject->getCoreTableName());
 
             if ($listObject->isMultilang()) {
                 // is the object multilingual?

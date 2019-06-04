@@ -229,6 +229,7 @@ class Discount extends \OxidEsales\Eshop\Core\Model\MultiLanguageModel
         foreach ($aBasketItems as $oBasketItem) {
             $oBasketArticle = $oBasketItem->getArticle(false);
 
+            $blForBasketItem = false;
             if ($this->oxdiscount__oxaddsumtype->value != 'itm') {
                 $blForBasketItem = $this->isForBasketItem($oBasketArticle);
             } else {
@@ -360,7 +361,7 @@ class Discount extends \OxidEsales\Eshop\Core\Model\MultiLanguageModel
         if ($this->oxdiscount__oxaddsumtype->value == '%') {
             return $dPrice * ($this->oxdiscount__oxaddsum->value / 100);
         } else {
-            $oCur = \OxidEsales\Eshop\Core\Registry::getConfig()->getActShopCurrencyObject();
+            $oCur = $this->getConfig()->getActShopCurrencyObject();
 
             return $this->oxdiscount__oxaddsum->value * $dAmount * $oCur->rate;
         }
@@ -391,7 +392,7 @@ class Discount extends \OxidEsales\Eshop\Core\Model\MultiLanguageModel
     public function getAddSum()
     {
         if ($this->oxdiscount__oxaddsumtype->value == 'abs') {
-            $oCur = \OxidEsales\Eshop\Core\Registry::getConfig()->getActShopCurrencyObject();
+            $oCur = $this->getConfig()->getActShopCurrencyObject();
 
             return $this->oxdiscount__oxaddsum->value * $oCur->rate;
         } else {

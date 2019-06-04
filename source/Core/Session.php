@@ -189,7 +189,7 @@ class Session extends \OxidEsales\Eshop\Core\Base
      */
     protected function getSidFromRequest()
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
         $sid = null;
 
         $sForceSidParam = $myConfig->getRequestParameter($this->getForcedName());
@@ -212,7 +212,7 @@ class Session extends \OxidEsales\Eshop\Core\Base
      */
     public function start()
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         if ($this->isAdmin()) {
             $this->setName("admin_sid");
@@ -262,7 +262,7 @@ class Session extends \OxidEsales\Eshop\Core\Base
      */
     public function getRequestChallengeToken()
     {
-        return preg_replace('/[^a-z0-9]/i', '', \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('stoken'));
+        return preg_replace('/[^a-z0-9]/i', '', $this->getConfig()->getRequestParameter('stoken'));
     }
 
     /**
@@ -305,26 +305,24 @@ class Session extends \OxidEsales\Eshop\Core\Base
     /**
      * Initialize session data (calls php::session_start())
      *
-     * @return bool
+     * @return null
      */
     protected function _sessionStart()
     {
-        if (headers_sent()) {
-            if ($this->needToSetHeaders()) {
-                //enforcing no caching when session is started
-                session_cache_limiter('nocache');
+        if ($this->needToSetHeaders()) {
+            //enforcing no caching when session is started
+            session_cache_limiter('nocache');
 
-                //cache limiter workaround for AOL browsers
-                //as suggested at http://ilia.ws/archives/59-AOL-Browser-Woes.html
-                if (isset($_SERVER['HTTP_USER_AGENT']) &&
-                    strpos($_SERVER['HTTP_USER_AGENT'], 'AOL') !== false
-                ) {
-                    session_cache_limiter(false);
-                    header("Cache-Control: no-store, private, must-revalidate, proxy-revalidate, post-check=0, pre-check=0, max-age=0, s-maxage=0");
-                }
-            } else {
+            //cache limiter workaround for AOL browsers
+            //as suggested at http://ilia.ws/archives/59-AOL-Browser-Woes.html
+            if (isset($_SERVER['HTTP_USER_AGENT']) &&
+                strpos($_SERVER['HTTP_USER_AGENT'], 'AOL') !== false
+            ) {
                 session_cache_limiter(false);
+                header("Cache-Control: no-store, private, must-revalidate, proxy-revalidate, post-check=0, pre-check=0, max-age=0, s-maxage=0");
             }
+        } else {
+            session_cache_limiter(false);
         }
 
         $this->_blStarted = @session_start();
@@ -479,7 +477,7 @@ class Session extends \OxidEsales\Eshop\Core\Base
      */
     public function sid($blForceSid = false)
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
         $blUseCookies = $this->_getSessionUseCookies();
         $sRet = '';
 
@@ -698,7 +696,7 @@ class Session extends \OxidEsales\Eshop\Core\Base
             return true;
         }
 
-        $oConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $oConfig = $this->getConfig();
 
         if (!$this->_getSessionUseCookies() || ($sUrl && $this->_getCookieSid() && !$oConfig->isCurrentProtocol($sUrl))) {
             // switching from ssl to non ssl or vice versa?
@@ -809,7 +807,7 @@ class Session extends \OxidEsales\Eshop\Core\Base
      */
     protected function _forceSessionStart()
     {
-        return (!\OxidEsales\Eshop\Core\Registry::getUtils()->isSearchEngine()) && ((( bool ) \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blForceSessionStart')) || \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter("su") || $this->_blForceNewSession);
+        return (!\OxidEsales\Eshop\Core\Registry::getUtils()->isSearchEngine()) && ((( bool ) $this->getConfig()->getConfigParam('blForceSessionStart')) || $this->getConfig()->getRequestParameter("su") || $this->_blForceNewSession);
     }
 
     /**
@@ -820,7 +818,7 @@ class Session extends \OxidEsales\Eshop\Core\Base
     protected function _allowSessionStart()
     {
         $blAllowSessionStart = true;
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         // special handling only in non-admin mode
         if (!$this->isAdmin()) {
@@ -858,7 +856,7 @@ class Session extends \OxidEsales\Eshop\Core\Base
 
         // check only for non search engines
         if (!\OxidEsales\Eshop\Core\Registry::getUtils()->isSearchEngine() && !$myUtilsServer->isTrustedClientIp() && !$this->_isValidRemoteAccessToken()) {
-            $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+            $myConfig = $this->getConfig();
 
             // checking if session user agent matches actual
             $blSwapped = $this->_checkUserAgent($myUtilsServer->getServerVar('HTTP_USER_AGENT'), $this->getVariable('sessionagent'));
@@ -912,7 +910,7 @@ class Session extends \OxidEsales\Eshop\Core\Base
     protected function _checkCookies($sCookieSid, $aSessCookieSetOnce)
     {
         $blSwapped = false;
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
         $sCurrUrl = $myConfig->isSsl() ? $myConfig->getSslShopUrl() : $myConfig->getShopUrl();
 
         $blSessCookieSetOnce = false;
@@ -990,7 +988,7 @@ class Session extends \OxidEsales\Eshop\Core\Base
      */
     protected function _getBasketName()
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
         if ($myConfig->getConfigParam('blMallSharedBasket') == 0) {
             return $myConfig->getShopId() . "_basket";
         }
@@ -1016,7 +1014,7 @@ class Session extends \OxidEsales\Eshop\Core\Base
      */
     protected function _getRequireSessionWithParams()
     {
-        $aCfgArray = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aRequireSessionWithParams');
+        $aCfgArray = $this->getConfig()->getConfigParam('aRequireSessionWithParams');
         if (is_array($aCfgArray)) {
             $aDefault = $this->_aRequireSessionWithParams;
             foreach ($aCfgArray as $key => $val) {
@@ -1039,7 +1037,7 @@ class Session extends \OxidEsales\Eshop\Core\Base
     protected function _isSessionRequiredAction()
     {
         foreach ($this->_getRequireSessionWithParams() as $sParam => $aValues) {
-            $sValue = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter($sParam);
+            $sValue = $this->getConfig()->getRequestParameter($sParam);
             if (isset($sValue)) {
                 if (is_array($aValues)) {
                     if (isset($aValues[$sValue]) && $aValues[$sValue]) {
@@ -1061,7 +1059,7 @@ class Session extends \OxidEsales\Eshop\Core\Base
      */
     protected function _getSessionUseCookies()
     {
-        return $this->isAdmin() || \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blSessionUseCookies');
+        return $this->isAdmin() || $this->getConfig()->getConfigParam('blSessionUseCookies');
     }
 
     /**
@@ -1071,7 +1069,7 @@ class Session extends \OxidEsales\Eshop\Core\Base
      */
     protected function _isValidRemoteAccessToken()
     {
-        $inputToken = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('rtoken');
+        $inputToken = $this->getConfig()->getRequestParameter('rtoken');
         $token = $this->getRemoteAccessToken(false);
 
         return !empty($inputToken) ? ($token === $inputToken) : false;

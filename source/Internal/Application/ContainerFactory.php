@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * Copyright © OXID eSales AG. All rights reserved.
  * See LICENSE file for license details.
@@ -6,9 +6,14 @@
 
 namespace OxidEsales\EshopCommunity\Internal\Application;
 
-use OxidEsales\EshopCommunity\Internal\Application\Utility\BasicContext;
+use OxidEsales\Eshop\Core\Registry;
+use OxidEsales\EshopCommunity\Internal\Application\PSR11Compliance\ContainerWrapper;
+use OxidEsales\EshopCommunity\Internal\Application\Utility\GraphQlTypePass;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Dumper\PhpDumper;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 /**
   *
@@ -22,7 +27,7 @@ class ContainerFactory
     private static $instance = null;
 
     /**
-     * @var ContainerInterface
+     * @var \Symfony\Component\DependencyInjection\Container
      */
     private $symfonyContainer = null;
 
@@ -44,7 +49,7 @@ class ContainerFactory
             $this->initializeContainer();
         }
 
-        return $this->symfonyContainer;
+        return new ContainerWrapper($this->symfonyContainer);
     }
 
     /**
@@ -53,12 +58,12 @@ class ContainerFactory
      */
     private function initializeContainer()
     {
-        $cacheFilePath = $this::getCacheFilePath();
+        $cacheFilePath = $this->getCacheFilePath();
 
         if (file_exists($cacheFilePath)) {
             $this->loadContainerFromCache($cacheFilePath);
         } else {
-            $this->getCompiledSymfonyContainer();
+            $this->createAndCompileSymfonyContainer();
             $this->saveContainerToCache($cacheFilePath);
         }
     }
@@ -73,12 +78,14 @@ class ContainerFactory
     }
 
     /**
-     * Returns compiled Container
+     * Builds the container from services.yaml and compiles it
      */
-    private function getCompiledSymfonyContainer()
+    private function createAndCompileSymfonyContainer()
     {
-        $containerBuilder = (new ContainerBuilderFactory())->create();
-        $this->symfonyContainer = $containerBuilder->getContainer();
+        $this->symfonyContainer = new ContainerBuilder();
+        $this->symfonyContainer->addCompilerPass(new GraphQlTypePass());
+        $loader = new YamlFileLoader($this->symfonyContainer, new FileLocator(__DIR__));
+        $loader->load('services.yaml');
         $this->symfonyContainer->compile();
     }
 
@@ -98,10 +105,11 @@ class ContainerFactory
      *
      * @return string
      */
-    private static function getCacheFilePath()
+    private function getCacheFilePath()
     {
-        $context = new BasicContext();
-        return $context->getContainerCacheFilePath();
+        $compileDir = Registry::getConfig()->getConfigParam('sCompileDir');
+
+        return $compileDir . '/containercache.php';
     }
 
     /**
@@ -113,16 +121,5 @@ class ContainerFactory
             self::$instance = new ContainerFactory();
         }
         return self::$instance;
-    }
-
-    /**
-     * Forces reload of the ContainerFactory on next request.
-     */
-    public static function resetContainer()
-    {
-        if (file_exists(self::getCacheFilePath())) {
-            unlink(self::getCacheFilePath());
-        }
-        self::$instance = null;
     }
 }

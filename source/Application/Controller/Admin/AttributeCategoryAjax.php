@@ -48,7 +48,7 @@ class AttributeCategoryAjax extends \OxidEsales\Eshop\Application\Controller\Adm
      */
     protected function _getQuery()
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
         $oDb = \OxidEsales\Eshop\Core\DatabaseProvider::getDb();
 
         $sCatTable = $this->_getViewName('oxcategories');

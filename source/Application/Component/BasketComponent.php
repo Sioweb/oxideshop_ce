@@ -59,7 +59,7 @@ class BasketComponent extends \OxidEsales\Eshop\Core\Controller\BaseController
      */
     public function init()
     {
-        $oConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $oConfig = $this->getConfig();
         if ($oConfig->getConfigParam('blPsBasketReservationEnabled')) {
             if ($oReservations = $this->getSession()->getBasketReservations()) {
                 if (!$oReservations->getTimeLeft()) {
@@ -79,7 +79,7 @@ class BasketComponent extends \OxidEsales\Eshop\Core\Controller\BaseController
         parent::init();
 
         // Basket exclude
-        if (\OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blBasketExcludeEnabled')) {
+        if ($this->getConfig()->getConfigParam('blBasketExcludeEnabled')) {
             if ($oBasket = $this->getSession()->getBasket()) {
                 $this->getParent()->setRootCatChanged($this->isRootCatChanged() && $oBasket->getContents());
             }
@@ -122,7 +122,7 @@ class BasketComponent extends \OxidEsales\Eshop\Core\Controller\BaseController
     public function toBasket($sProductId = null, $dAmount = null, $aSel = null, $aPersParam = null, $blOverride = false)
     {
         // adding to basket is not allowed ?
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
         if (\OxidEsales\Eshop\Core\Registry::getUtils()->isSearchEngine()) {
             return;
         }
@@ -266,7 +266,7 @@ class BasketComponent extends \OxidEsales\Eshop\Core\Controller\BaseController
         $sPosition .= ($iPageNr > 0) ? 'pgNr=' . $iPageNr . '&' : '';
 
         // reload and backbutton blocker
-        if (\OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('iNewBasketItemMessage') == 3) {
+        if ($this->getConfig()->getConfigParam('iNewBasketItemMessage') == 3) {
             // saving return to shop link to session
             \OxidEsales\Eshop\Core\Registry::getSession()->setVariable('_backtoshop', $controllerId . $sPosition);
 
@@ -339,7 +339,8 @@ class BasketComponent extends \OxidEsales\Eshop\Core\Controller\BaseController
             ];
         }
 
-        /*if (is_array($aProducts) && count($aProducts)) {*/
+        /** replace-in_array&count */
+        /** if (is_array($aProducts) && count($aProducts)) { */
         if (!empty($aProducts)) {
             if (\OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('removeBtn') !== null) {
                 //setting amount to 0 if removing article from basket
@@ -368,7 +369,7 @@ class BasketComponent extends \OxidEsales\Eshop\Core\Controller\BaseController
      */
     protected function _addItems($products)
     {
-        $activeView = \OxidEsales\Eshop\Core\Registry::getConfig()->getActiveView();
+        $activeView = $this->getConfig()->getActiveView();
         $errorDestination = $activeView->getErrorDestination();
 
         $basket = $this->getSession()->getBasket();
@@ -561,7 +562,7 @@ class BasketComponent extends \OxidEsales\Eshop\Core\Controller\BaseController
         } catch (\OxidEsales\Eshop\Core\Exception\OutOfStockException $exception) {
             $exception->setDestination($errorDestination);
             // #950 Change error destination to basket popup
-            if (!$errorDestination && \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('iNewBasketItemMessage') == 2) {
+            if (!$errorDestination && $this->getConfig()->getConfigParam('iNewBasketItemMessage') == 2) {
                 $errorDestination = 'popup';
             }
             \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay($exception, false, (bool) $errorDestination, $errorDestination);

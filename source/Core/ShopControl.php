@@ -12,7 +12,7 @@ use OxidEsales\Eshop\Core\Exception\StandardException;
 use OxidEsales\Eshop\Core\Cache\DynamicContent\ContentCache;
 use oxOutput;
 use oxSystemComponentException;
-use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer;
 use ReflectionMethod;
 
 /**
@@ -260,7 +260,7 @@ class ShopControl extends \OxidEsales\Eshop\Core\Base
     protected function _process($class, $function, $parameters = null, $viewsChain = null)
     {
         startProfile('process');
-        $config = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $config = $this->getConfig();
 
         // executing maintenance tasks
         $this->_executeMaintenanceTasks();
@@ -375,7 +375,7 @@ class ShopControl extends \OxidEsales\Eshop\Core\Base
         $view->setFncName($function);
         $view->setViewParameters($parameters);
 
-        \OxidEsales\Eshop\Core\Registry::getConfig()->setActiveView($view);
+        $this->getConfig()->setActiveView($view);
 
         $this->onViewCreation($view);
 
@@ -425,7 +425,8 @@ class ShopControl extends \OxidEsales\Eshop\Core\Base
     {
         $errors = $this->_getErrors($controllerName);
         $formattedErrors = [];
-        /*if (is_array($errors) && count($errors)) {*/
+        /** replace-in_array&count */
+        /** if (is_array($errors) && count($errors)) { */
         if (!empty($errors)) {
             foreach ($errors as $location => $ex2) {
                 foreach ($ex2 as $key => $er) {
@@ -454,7 +455,7 @@ class ShopControl extends \OxidEsales\Eshop\Core\Base
         $templateName = $view->render();
 
         // check if template dir exists
-        $templateFile = \OxidEsales\Eshop\Core\Registry::getConfig()->getTemplatePath($templateName, $this->isAdmin());
+        $templateFile = $this->getConfig()->getTemplatePath($templateName, $this->isAdmin());
         if (!file_exists($templateFile)) {
             $ex = oxNew(\OxidEsales\Eshop\Core\Exception\SystemComponentException::class);
             $ex->setMessage('EXCEPTION_SYSTEMCOMPONENT_TEMPLATENOTFOUND' . ' ' . $templateName);
@@ -465,7 +466,7 @@ class ShopControl extends \OxidEsales\Eshop\Core\Base
             if ($this->_isDebugMode()) {
                 \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay($ex);
             }
-            \OxidEsales\Eshop\Core\Registry::getLogger()->error($ex->getMessage(), [$ex]);
+            $ex->debugOut();
         }
 
         // Output processing. This is useful for modules. As sometimes you may want to process output manually.
@@ -475,7 +476,8 @@ class ShopControl extends \OxidEsales\Eshop\Core\Base
 
         //add all exceptions to display
         $errors = $this->_getErrors($view->getClassName());
-        /*if (is_array($errors) && count($errors)) {*/
+        /** replace-in_array&count */
+        /** if (is_array($errors) && count($errors)) { */
         if (!empty($errors)) {
             \OxidEsales\Eshop\Core\Registry::getUtilsView()->passAllErrorsToView($viewData, $errors);
         }
@@ -549,7 +551,7 @@ class ShopControl extends \OxidEsales\Eshop\Core\Base
      */
     protected function _runOnce()
     {
-        $config = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $config = $this->getConfig();
 
         //Ensures config values are available, database connection is established,
         //session is started, a possible SeoUrl is decoded, globals and environment variables are set.
@@ -587,7 +589,7 @@ class ShopControl extends \OxidEsales\Eshop\Core\Base
             $errorReporting = $errorReporting ^ E_DEPRECATED;
         }
 
-        if (\OxidEsales\Eshop\Core\Registry::getConfig()->isProductiveMode() && !ini_get('log_errors')) {
+        if ($this->getConfig()->isProductiveMode() && !ini_get('log_errors')) {
             $errorReporting = 0;
         }
 
@@ -644,7 +646,7 @@ class ShopControl extends \OxidEsales\Eshop\Core\Base
     protected function stopMonitoring($view)
     {
         if ($this->_isDebugMode() && !$this->isAdmin()) {
-            $debugLevel = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('iDebug');
+            $debugLevel = $this->getConfig()->getConfigParam('iDebug');
             $debugInfo = oxNew(\OxidEsales\Eshop\Core\DebugInfo::class);
 
             $logId = md5(time() . rand() . rand());
@@ -683,7 +685,7 @@ class ShopControl extends \OxidEsales\Eshop\Core\Base
     {
         $debugInfo = oxNew(\OxidEsales\Eshop\Core\DebugInfo::class);
 
-        $debugLevel = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('iDebug');
+        $debugLevel = $this->getConfig()->getConfigParam('iDebug');
 
         $message = '';
 
@@ -710,13 +712,13 @@ class ShopControl extends \OxidEsales\Eshop\Core\Base
      */
     protected function _handleSystemException($exception)
     {
-        \OxidEsales\Eshop\Core\Registry::getLogger()->error($exception->getMessage(), [$exception]);
+        $exception->debugOut();
 
         if ($this->_isDebugMode()) {
             \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay($exception);
             $this->_process('exceptionError', 'displayExceptionError');
         } else {
-            \OxidEsales\Eshop\Core\Registry::getUtils()->redirect(\OxidEsales\Eshop\Core\Registry::getConfig()->getShopHomeUrl() . 'cl=start', true, 302);
+            \OxidEsales\Eshop\Core\Registry::getUtils()->redirect($this->getConfig()->getShopHomeUrl() . 'cl=start', true, 302);
         }
     }
 
@@ -743,7 +745,7 @@ class ShopControl extends \OxidEsales\Eshop\Core\Base
         if ($this->_isDebugMode()) {
             \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay($exception);
         }
-        \OxidEsales\Eshop\Core\Registry::getUtils()->redirect(\OxidEsales\Eshop\Core\Registry::getConfig()->getShopHomeUrl() . 'cl=start', true, 302);
+        \OxidEsales\Eshop\Core\Registry::getUtils()->redirect($this->getConfig()->getShopHomeUrl() . 'cl=start', true, 302);
     }
 
     /**
@@ -809,7 +811,7 @@ class ShopControl extends \OxidEsales\Eshop\Core\Base
         if (!$exception instanceof \OxidEsales\Eshop\Core\Exception\StandardException) {
             $exception = new \OxidEsales\Eshop\Core\Exception\StandardException($exception->getMessage(), $exception->getCode(), $exception);
         }
-        \OxidEsales\Eshop\Core\Registry::getLogger()->error($exception->getMessage(), [$exception]);
+        $exception->debugOut();
     }
 
     /**

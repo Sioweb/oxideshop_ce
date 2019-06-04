@@ -44,7 +44,7 @@ class ArticleBundleAjax extends \OxidEsales\Eshop\Application\Controller\Admin\L
      */
     protected function _getQuery()
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
         $oDb = \OxidEsales\Eshop\Core\DatabaseProvider::getDb();
         $sArticleTable = $this->_getViewName('oxarticles');
         $sView = $this->_getViewName('oxobject2category');
@@ -91,7 +91,7 @@ class ArticleBundleAjax extends \OxidEsales\Eshop\Application\Controller\Admin\L
         $sQ = parent::_addFilter($sQ);
 
         // display variants or not ?
-        $sQ .= \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blVariantsSelection') ? ' group by ' . $sArtTable . '.oxid ' : '';
+        $sQ .= $this->getConfig()->getConfigParam('blVariantsSelection') ? ' group by ' . $sArtTable . '.oxid ' : '';
 
         return $sQ;
     }

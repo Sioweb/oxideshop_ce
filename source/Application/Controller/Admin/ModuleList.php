@@ -28,7 +28,7 @@ class ModuleList extends \OxidEsales\Eshop\Application\Controller\Admin\AdminLis
      */
     public function render()
     {
-        $sModulesDir = \OxidEsales\Eshop\Core\Registry::getConfig()->getModulesDir();
+        $sModulesDir = $this->getConfig()->getModulesDir();
 
         $oModuleList = oxNew(\OxidEsales\Eshop\Core\Module\ModuleList::class);
         $aModules = $oModuleList->getModulesFromDir($sModulesDir);

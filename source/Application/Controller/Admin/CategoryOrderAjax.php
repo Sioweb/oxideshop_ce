@@ -139,6 +139,8 @@ class CategoryOrderAjax extends \OxidEsales\Eshop\Application\Controller\Admin\L
             $aOrdArt = [];
         }
 
+        $blEnable = false;
+
         if (is_array($aAddArticle)) {
             // storing newly ordered article seq.
             foreach ($aAddArticle as $sAdd) {
@@ -180,7 +182,8 @@ class CategoryOrderAjax extends \OxidEsales\Eshop\Application\Controller\Admin\L
             $this->resetContentCache();
 
             $aNewOrder = \OxidEsales\Eshop\Core\Registry::getSession()->getVariable("neworder_sess");
-            /*if (is_array($aNewOrder) && count($aNewOrder)) {*/
+            /** replace-in_array&count */
+            /** if (is_array($aNewOrder) && count($aNewOrder)) { */
             if (!empty($aNewOrder)) {
                 $sO2CView = $this->_getViewName('oxobject2category');
                 $sSelect = "select * from $sO2CView where $sO2CView.oxcatnid='" . $oCategory->getId() . "' and $sO2CView.oxobjectid in (" . implode(", ", \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->quoteArray($aNewOrder)) . " )";

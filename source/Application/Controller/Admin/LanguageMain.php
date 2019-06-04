@@ -57,6 +57,8 @@ class LanguageMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminD
      */
     public function render()
     {
+        $myConfig = $this->getConfig();
+
         parent::render();
 
         $sOxId = $this->_aViewData["oxid"] = $this->getEditObjectId();
@@ -154,10 +156,10 @@ class LanguageMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminD
 
         if ($this->isValidLanguageData($this->_aLangData)) {
             //saving languages info
-            \OxidEsales\Eshop\Core\Registry::getConfig()->saveShopConfVar('aarr', 'aLanguageParams', $this->_aLangData['params']);
-            \OxidEsales\Eshop\Core\Registry::getConfig()->saveShopConfVar('aarr', 'aLanguages', $this->_aLangData['lang']);
-            \OxidEsales\Eshop\Core\Registry::getConfig()->saveShopConfVar('arr', 'aLanguageURLs', $this->_aLangData['urls']);
-            \OxidEsales\Eshop\Core\Registry::getConfig()->saveShopConfVar('arr', 'aLanguageSSLURLs', $this->_aLangData['sslUrls']);
+            $this->getConfig()->saveShopConfVar('aarr', 'aLanguageParams', $this->_aLangData['params']);
+            $this->getConfig()->saveShopConfVar('aarr', 'aLanguages', $this->_aLangData['lang']);
+            $this->getConfig()->saveShopConfVar('arr', 'aLanguageURLs', $this->_aLangData['urls']);
+            $this->getConfig()->saveShopConfVar('arr', 'aLanguageSSLURLs', $this->_aLangData['sslUrls']);
             //checking if added language already has created multilang fields
             //with new base ID - if not, creating new fields
             if ($blNewLanguage) {
@@ -185,7 +187,7 @@ class LanguageMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminD
      */
     protected function _getLanguageInfo($sOxId)
     {
-        $sDefaultLang = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('sDefaultLang');
+        $sDefaultLang = $this->getConfig()->getConfigParam('sDefaultLang');
 
         $aLangData = $this->_aLangData['params'][$sOxId];
         $aLangData['abbr'] = $sOxId;
@@ -216,10 +218,10 @@ class LanguageMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminD
      */
     protected function _getLanguages()
     {
-        $aLangData['params'] = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aLanguageParams');
-        $aLangData['lang'] = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aLanguages');
-        $aLangData['urls'] = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aLanguageURLs');
-        $aLangData['sslUrls'] = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aLanguageSSLURLs');
+        $aLangData['params'] = $this->getConfig()->getConfigParam('aLanguageParams');
+        $aLangData['lang'] = $this->getConfig()->getConfigParam('aLanguages');
+        $aLangData['urls'] = $this->getConfig()->getConfigParam('aLanguageURLs');
+        $aLangData['sslUrls'] = $this->getConfig()->getConfigParam('aLanguageSSLURLs');
 
         // empty languages parameters array - creating new one with default values
         if (!is_array($aLangData['params'])) {
@@ -238,7 +240,8 @@ class LanguageMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminD
     protected function _updateAbbervation($sOldId, $sNewId)
     {
         foreach (array_keys($this->_aLangData) as $sTypeKey) {
-            /*if (is_array($this->_aLangData[$sTypeKey]) && count($this->_aLangData[$sTypeKey]) > 0) {*/
+            /** replace-in_array&count */
+            /** if (is_array($this->_aLangData[$sTypeKey]) && count($this->_aLangData[$sTypeKey]) > 0) { */
             if (!empty($this->_aLangData[$sTypeKey])) {
                 if ($sTypeKey == 'urls' || $sTypeKey == 'sslUrls') {
                     continue;
@@ -310,7 +313,7 @@ class LanguageMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminD
     protected function _setDefaultLang($sOxId)
     {
         $sDefaultId = $this->_aLangData['params'][$sOxId]['baseId'];
-        \OxidEsales\Eshop\Core\Registry::getConfig()->saveShopConfVar('str', 'sDefaultLang', $sDefaultId);
+        $this->getConfig()->saveShopConfVar('str', 'sDefaultLang', $sDefaultId);
     }
 
     /**
@@ -348,7 +351,7 @@ class LanguageMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminD
      */
     protected function _checkLangTranslations($sOxId)
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         $sDir = dirname($myConfig->getTranslationsDir('lang.php', $sOxId));
 
@@ -414,6 +417,7 @@ class LanguageMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminD
      */
     protected function _checkLangExists($sAbbr)
     {
+        $myConfig = $this->getConfig();
         $aAbbrs = array_keys($this->_aLangData['lang']);
 
         return in_array($sAbbr, $aAbbrs);

@@ -54,7 +54,7 @@ class ShopList extends \OxidEsales\Eshop\Application\Controller\Admin\AdminListC
      */
     public function render()
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         parent::render();
 

@@ -26,7 +26,7 @@ class ContentMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
      */
     public function render()
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         parent::render();
 
@@ -93,6 +93,8 @@ class ContentMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
     {
         parent::save();
 
+        $myConfig = $this->getConfig();
+
         $soxId = $this->getEditObjectId();
         $aParams = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter("editval");
 
@@ -158,6 +160,8 @@ class ContentMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
     {
         parent::save();
 
+        $myConfig = $this->getConfig();
+
         $soxId = $this->getEditObjectId();
         $aParams = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter("editval");
 
@@ -222,7 +226,7 @@ class ContentMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDe
         if (!strlen($sIdent)) {
             $blAllow = true;
         // We force reading from master to prevent issues with slow replications or open transactions (see ESDEV-3804).
-        } elseif ($masterDb->getOne("select oxid from oxcontents where oxloadid = " . $masterDb->quote($sIdent) . " and oxid != " . $masterDb->quote($sOxId) . " and oxshopid = '" . \OxidEsales\Eshop\Core\Registry::getConfig()->getShopId() . "'")) {
+        } elseif ($masterDb->getOne("select oxid from oxcontents where oxloadid = " . $masterDb->quote($sIdent) . " and oxid != " . $masterDb->quote($sOxId) . " and oxshopid = '" . $this->getConfig()->getShopId() . "'")) {
             $blAllow = true;
         }
 

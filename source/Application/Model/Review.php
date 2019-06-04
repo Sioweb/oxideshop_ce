@@ -105,7 +105,9 @@ class Review extends \OxidEsales\Eshop\Core\Model\BaseModel
         $oRevs = oxNew(\OxidEsales\Eshop\Core\Model\ListModel::class);
         $oRevs->init('oxreview');
 
-        /*if (is_array($aIds) && count($aIds)) {*/
+        $sObjectIdWhere = '';
+        /** replace-in_array&count */
+        /** if (is_array($aIds) && count($aIds)) { */
         if (!empty($aIds)) {
             $sObjectIdWhere = "oxreviews.oxobjectid in ( " . implode(", ", \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->quoteArray($aIds)) . " )";
         } elseif (is_string($aIds) && $aIds) {
@@ -122,7 +124,7 @@ class Review extends \OxidEsales\Eshop\Core\Model\BaseModel
             $sSelect .= ' and oxreviews.oxtext != "" ';
         }
 
-        if (\OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blGBModerate')) {
+        if ($this->getConfig()->getConfigParam('blGBModerate')) {
             $sSelect .= ' and ( oxreviews.oxactive = "1" ';
             $sSelect .= ($oUser = $this->getUser()) ? 'or  oxreviews.oxuserid = ' . $oDb->quote($oUser->getId()) . ' )' : ')';
         }

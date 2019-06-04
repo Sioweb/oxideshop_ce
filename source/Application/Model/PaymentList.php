@@ -26,7 +26,7 @@ class PaymentList extends \OxidEsales\Eshop\Core\Model\ListModel
      */
     public function __construct()
     {
-        $this->setHomeCountry(\OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aHomeCountry'));
+        $this->setHomeCountry($this->getConfig()->getConfigParam('aHomeCountry'));
         parent::__construct('oxpayment');
     }
 

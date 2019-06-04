@@ -6,7 +6,6 @@
 
 namespace OxidEsales\EshopCommunity\Application\Controller\Admin;
 
-use OxidEsales\Eshop\Core\Registry;
 use oxRegistry;
 use oxException;
 use oxModule;
@@ -61,7 +60,7 @@ class ModuleMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDet
      */
     public function activateModule()
     {
-        if (\OxidEsales\Eshop\Core\Registry::getConfig()->isDemoShop()) {
+        if ($this->getConfig()->isDemoShop()) {
             \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay('MODULE_ACTIVATION_NOT_POSSIBLE_IN_DEMOMODE');
 
             return;
@@ -84,9 +83,9 @@ class ModuleMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDet
             if ($oModuleInstaller->activate($oModule)) {
                 $this->_aViewData["updatenav"] = "1";
             }
-        } catch (\OxidEsales\Eshop\Core\Exception\StandardException $exception) {
-            Registry::getUtilsView()->addErrorToDisplay($exception);
-            Registry::getLogger()->error($exception->getMessage(), [$exception]);
+        } catch (\OxidEsales\Eshop\Core\Exception\StandardException $oEx) {
+            \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay($oEx);
+            $oEx->debugOut();
         }
     }
 
@@ -97,7 +96,7 @@ class ModuleMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDet
      */
     public function deactivateModule()
     {
-        if (\OxidEsales\Eshop\Core\Registry::getConfig()->isDemoShop()) {
+        if ($this->getConfig()->isDemoShop()) {
             \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay('MODULE_ACTIVATION_NOT_POSSIBLE_IN_DEMOMODE');
 
             return;
@@ -120,9 +119,9 @@ class ModuleMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDet
             if ($oModuleInstaller->deactivate($oModule)) {
                 $this->_aViewData["updatenav"] = "1";
             }
-        } catch (\OxidEsales\Eshop\Core\Exception\StandardException $exception) {
-            Registry::getUtilsView()->addErrorToDisplay($exception);
-            Registry::getLogger()->error($exception->getMessage(), [$exception]);
+        } catch (\OxidEsales\Eshop\Core\Exception\StandardException $oEx) {
+            \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay($oEx);
+            $oEx->debugOut();
         }
     }
 }

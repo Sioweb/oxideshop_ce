@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * Copyright © OXID eSales AG. All rights reserved.
  * See LICENSE file for license details.
@@ -86,7 +86,7 @@ class ReviewAndRatingMergingService implements ReviewAndRatingMergingServiceInte
                     'ratingId'      => $rating->getId(),
                     'reviewId'      => false,
                     'rating'        => $rating->getRating(),
-                    'text'          => '',
+                    'text'          => false,
                     'objectId'      => $rating->getObjectId(),
                     'objectType'    => $rating->getType(),
                     'createdAt'     => $rating->getCreatedAt(),

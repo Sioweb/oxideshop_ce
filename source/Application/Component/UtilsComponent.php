@@ -70,7 +70,8 @@ class UtilsComponent extends \OxidEsales\Eshop\Core\Controller\BaseController
                 }
 
                 $aViewProds = $oParentView->getViewProductList();
-                /*if (is_array($aViewProds) && count($aViewProds)) {*/
+                /** replace-in_array&count */
+                /** if (is_array($aViewProds) && count($aViewProds)) { */
                 if (!empty($aViewProds)) {
                     foreach ($aViewProds as $oProduct) {
                         if (isset($aItems[$oProduct->getId()])) {
@@ -144,7 +145,7 @@ class UtilsComponent extends \OxidEsales\Eshop\Core\Controller\BaseController
 
             // processing amounts
             $dAmount = str_replace(',', '.', $dAmount);
-            if (!\OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blAllowUnevenAmounts')) {
+            if (!$this->getConfig()->getConfigParam('blAllowUnevenAmounts')) {
                 $dAmount = round(( string ) $dAmount);
             }
 
@@ -165,6 +166,7 @@ class UtilsComponent extends \OxidEsales\Eshop\Core\Controller\BaseController
     {
         parent::render();
 
+        $myConfig = $this->getConfig();
         $oParentView = $this->getParent();
 
         // add content for main menu

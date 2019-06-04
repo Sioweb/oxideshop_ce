@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * Copyright © OXID eSales AG. All rights reserved.
  * See LICENSE file for license details.
@@ -6,23 +6,11 @@
 
 namespace OxidEsales\EshopCommunity\Internal\Utility;
 
-use OxidEsales\EshopCommunity\Internal\Application\Utility\BasicContextInterface;
-
 /**
  * @internal
  */
-interface ContextInterface extends BasicContextInterface
+interface ContextInterface
 {
-    /**
-     * @return string
-     */
-    public function getEnvironment(): string;
-
-    /**
-     * @return int
-     */
-    public function getCurrentShopId(): int;
-
     /**
      * @return string
      */
@@ -31,15 +19,10 @@ interface ContextInterface extends BasicContextInterface
     /**
      * @return string
      */
-    public function getLogFilePath(): string;
+    public function getLogFilePath();
 
     /**
      * @return array
      */
-    public function getRequiredContactFormFields(): array;
-
-    /**
-     * @return string
-     */
-    public function getConfigurationEncryptionKey(): string;
+    public function getRequiredContactFormFields();
 }

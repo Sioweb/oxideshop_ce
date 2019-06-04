@@ -36,7 +36,7 @@ class ShopMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDetai
      */
     public function render()
     {
-        $config = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $config = $this->getConfig();
         parent::render();
 
         $shopId = $this->_aViewData["oxid"] = $this->getEditObjectId();
@@ -88,7 +88,7 @@ class ShopMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDetai
     {
         parent::save();
 
-        $config = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $config = $this->getConfig();
         $shopId = $this->getEditObjectId();
 
         $parameters = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter("editval");
@@ -151,7 +151,7 @@ class ShopMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDetai
     {
         $nonCopyVars = ["aSerials", "IMS", "IMD", "IMA", "sBackTag", "sUtilModule", "aModulePaths", "aModuleFiles", "aModuleEvents", "aModuleVersions", "aModuleTemplates", "aModules", "aDisabledModules"];
         //adding non copable multishop field options
-        $multiShopTables = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aMultiShopTables');
+        $multiShopTables = $this->getConfig()->getConfigParam('aMultiShopTables');
         foreach ($multiShopTables as $multishopTable) {
             $nonCopyVars[] = 'blMallInherit_' . strtolower($multishopTable);
         }
@@ -166,7 +166,7 @@ class ShopMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDetai
      */
     protected function _copyConfigVars($shop)
     {
-        $config = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $config = $this->getConfig();
         $utilsObject = \OxidEsales\Eshop\Core\Registry::getUtilsObject();
         $db = \OxidEsales\Eshop\Core\DatabaseProvider::getDb();
 

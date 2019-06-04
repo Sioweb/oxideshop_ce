@@ -6,7 +6,6 @@
 
 namespace OxidEsales\EshopCommunity\Application\Controller\Admin;
 
-use OxidEsales\Eshop\Core\Registry;
 use oxRegistry;
 use oxConfig;
 use oxAdminDetails;
@@ -30,13 +29,13 @@ class ThemeConfiguration extends \OxidEsales\Eshop\Application\Controller\Admin\
      */
     public function render()
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         $sTheme = $this->_sTheme = $this->getEditObjectId();
         $sShopId = $myConfig->getShopId();
 
         if (!isset($sTheme)) {
-            $sTheme = $this->_sTheme = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('sTheme');
+            $sTheme = $this->_sTheme = $this->getConfig()->getConfigParam('sTheme');
         }
 
         $oTheme = oxNew(\OxidEsales\Eshop\Core\Theme::class);
@@ -50,9 +49,9 @@ class ThemeConfiguration extends \OxidEsales\Eshop\Application\Controller\Admin\
                 foreach ($this->_aConfParams as $sType => $sParam) {
                     $this->_aViewData[$sParam] = $aDbVariables['vars'][$sType];
                 }
-            } catch (\OxidEsales\Eshop\Core\Exception\StandardException $exception) {
-                Registry::getUtilsView()->addErrorToDisplay($exception);
-                Registry::getLogger()->error($exception->getMessage(), [$exception]);
+            } catch (\OxidEsales\Eshop\Core\Exception\StandardException $oEx) {
+                \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay($oEx);
+                $oEx->debugOut();
             }
         } else {
             \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay(oxNew(\OxidEsales\Eshop\Core\Exception\StandardException::class, 'EXCEPTION_THEME_NOT_LOADED'));
@@ -80,7 +79,7 @@ class ThemeConfiguration extends \OxidEsales\Eshop\Application\Controller\Admin\
      */
     public function saveConfVars()
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         oxAdminDetails::save();
 

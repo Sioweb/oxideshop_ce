@@ -23,7 +23,7 @@ class ToolsController extends \OxidEsales\Eshop\Application\Controller\Admin\Adm
      */
     public function render()
     {
-        if (\OxidEsales\Eshop\Core\Registry::getConfig()->isDemoShop()) {
+        if ($this->getConfig()->isDemoShop()) {
             return \OxidEsales\Eshop\Core\Registry::getUtils()->showMessageAndExit("Access denied !");
         }
 

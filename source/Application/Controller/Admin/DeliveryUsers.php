@@ -29,6 +29,7 @@ class DeliveryUsers extends \OxidEsales\Eshop\Application\Controller\Admin\Admin
         parent::render();
 
         $soxId = $this->getEditObjectId();
+        $sSelGroup = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter("selgroup");
 
         $sViewName = getViewName("oxgroups", $this->_iEditLang);
         // all usergroups

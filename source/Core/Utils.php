@@ -219,7 +219,7 @@ class Utils extends \OxidEsales\Eshop\Core\Base
         }
         startProfile("isSearchEngine");
 
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
         $blIsSe = false;
 
         if (!($myConfig->getConfigParam('iDebug') && $this->isAdmin())) {
@@ -299,7 +299,7 @@ class Utils extends \OxidEsales\Eshop\Core\Base
 
         if (is_null($iCurPrecision)) {
             if (!$oCur) {
-                $oCur = \OxidEsales\Eshop\Core\Registry::getConfig()->getActShopCurrencyObject();
+                $oCur = $this->getConfig()->getActShopCurrencyObject();
             }
 
             $iCurPrecision = $oCur->decimal;
@@ -854,7 +854,7 @@ class Utils extends \OxidEsales\Eshop\Core\Base
      */
     public function checkAccessRights()
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         $blIsAuth = false;
 
@@ -967,7 +967,7 @@ class Utils extends \OxidEsales\Eshop\Core\Base
             return $this->_blSeoIsActive;
         }
 
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         if (($this->_blSeoIsActive = $myConfig->getConfigParam('blSeoMode')) === null) {
             $this->_blSeoIsActive = true;
@@ -1073,8 +1073,8 @@ class Utils extends \OxidEsales\Eshop\Core\Base
 
         try { //may occur in case db is lost
             $this->getSession()->freeze();
-        } catch (\OxidEsales\Eshop\Core\Exception\StandardException $exception) {
-            \OxidEsales\Eshop\Core\Registry::getLogger()->error($exception->getMessage(), [$exception]);
+        } catch (\OxidEsales\Eshop\Core\Exception\StandardException $oEx) {
+            $oEx->debugOut();
             //do nothing else to make sure the redirect takes place
         }
 
@@ -1144,7 +1144,7 @@ class Utils extends \OxidEsales\Eshop\Core\Base
      */
     protected function _fillExplodeArray($aName, $dVat = null)
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
         $oObject = new stdClass();
         $aPrice = explode('!P!', $aName[0]);
 
@@ -1209,9 +1209,9 @@ class Utils extends \OxidEsales\Eshop\Core\Base
     {
         $blCalculationModeNetto = $this->_isPriceViewModeNetto();
 
-        $oCurrency = \OxidEsales\Eshop\Core\Registry::getConfig()->getActShopCurrencyObject();
+        $oCurrency = $this->getConfig()->getActShopCurrencyObject();
 
-        $blEnterNetPrice = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blEnterNetPrice');
+        $blEnterNetPrice = $this->getConfig()->getConfigParam('blEnterNetPrice');
         if ($blCalculationModeNetto && !$blEnterNetPrice) {
             $dPrice = round(\OxidEsales\Eshop\Core\Price::brutto2Netto($dPrice, $dVat), $oCurrency->decimal);
         } elseif (!$blCalculationModeNetto && $blEnterNetPrice) {
@@ -1228,7 +1228,7 @@ class Utils extends \OxidEsales\Eshop\Core\Base
      */
     protected function _isPriceViewModeNetto()
     {
-        $blResult = (bool) \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blShowNetPrice');
+        $blResult = (bool) $this->getConfig()->getConfigParam('blShowNetPrice');
         $oUser = $this->_getArticleUser();
         if ($oUser) {
             $blResult = $oUser->isPriceViewModeNetto();
@@ -1295,7 +1295,7 @@ class Utils extends \OxidEsales\Eshop\Core\Base
      */
     public function logger($sText, $blNewline = false)
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         if ($myConfig->getConfigParam('iDebug') == -2) {
             if (gettype($sText) != 'string') {
@@ -1305,6 +1305,20 @@ class Utils extends \OxidEsales\Eshop\Core\Base
             $logger = Registry::getLogger();
             $logger->debug($logMessage);
         }
+    }
+
+    /**
+     * Applies ROT13 encoding to $sStr
+     *
+     * @deprecated since v6.1.0 (2017-12-19); Use standard str_rot13 method.
+     *
+     * @param string $sStr to encoding string
+     *
+     * @return string
+     */
+    public function strRot13($sStr)
+    {
+        return str_rot13($sStr);
     }
 
     /**
@@ -1322,7 +1336,7 @@ class Utils extends \OxidEsales\Eshop\Core\Base
     {
         $versionPrefix = $this->getEditionCacheFilePrefix();
 
-        $sPath = realpath(\OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('sCompileDir'));
+        $sPath = realpath($this->getConfig()->getConfigParam('sCompileDir'));
 
         if (!$sPath) {
             return false;
@@ -1370,7 +1384,7 @@ class Utils extends \OxidEsales\Eshop\Core\Base
     {
         $sCache = "<?php\n\$aLangCache = " . var_export($aLangCache, true) . ";\n?>";
         $sFileName = $this->getCacheFilePath($sCacheName);
-        $cacheDirectory = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('sCompileDir');
+        $cacheDirectory = $this->getConfig()->getConfigParam('sCompileDir');
 
         $tmpFile = $cacheDirectory . basename($sFileName) . uniqid('.temp', true) . '.txt';
         $blRes = file_put_contents($tmpFile, $sCache, LOCK_EX);
@@ -1394,6 +1408,24 @@ class Utils extends \OxidEsales\Eshop\Core\Base
         }
 
         return $sUrl;
+    }
+
+    /**
+     * Writes given log message. Returns write state
+     *
+     * @deprecated since v5.3 (2016-06-17); Logging mechanism will change in the future.
+     *
+     * @param string $logMessage  log message
+     * @param string $logFileName log file name
+     *
+     * @return bool
+     */
+    public function writeToLog($logMessage, $logFileName)
+    {
+        $logger = Registry::getLogger();
+        $logger->error($logMessage);
+
+        return true;
     }
 
     /**

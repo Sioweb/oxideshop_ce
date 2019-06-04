@@ -86,8 +86,8 @@ class Output extends \OxidEsales\Eshop\Core\Base
     final public function addVersionTags($sOutput)
     {
         // DISPLAY IT
-        $sVersion = \OxidEsales\Eshop\Core\Registry::getConfig()->getVersion();
-        $sEdition = \OxidEsales\Eshop\Core\Registry::getConfig()->getFullEdition();
+        $sVersion = $this->getConfig()->getVersion();
+        $sEdition = $this->getConfig()->getFullEdition();
         $sCurYear = date("Y");
 
         // SHOW ONLY MAJOR VERSION NUMBER
@@ -98,7 +98,7 @@ class Output extends \OxidEsales\Eshop\Core\Base
 
         // Replacing only once per page
         $sSearch = "</head>";
-        $sReplace = "</head>\n  <!-- OXID eShop {$sEdition}, Version {$sMajorVersion}{$sShopMode}, Shopping Cart System (c) OXID eSales AG 2003 - {$sCurYear} - http://www.oxid-esales.com -->";
+        $sReplace = "</head>\n  <!-- OXID eShop {$sEdition}, Version {$sMajorVersion}{$sShopMode}, Shopping Cart System (c) OXID eSales AG 2003 - {$sCurYear} - https://www.oxid-esales.com -->";
 
         $sOutput = ltrim($sOutput);
         if (($pos = stripos($sOutput, $sSearch)) !== false) {

@@ -24,7 +24,7 @@ class PriceAlarmMail extends \OxidEsales\Eshop\Application\Controller\Admin\Admi
      */
     public function render()
     {
-        $config = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $config = $this->getConfig();
 
         parent::render();
 

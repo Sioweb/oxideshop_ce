@@ -173,6 +173,16 @@ class SystemRequirements
     }
 
     /**
+     * Returns config instance
+     *
+     * @return \oxConfig
+     */
+    public function getConfig()
+    {
+        return \OxidEsales\Eshop\Core\Registry::getConfig();
+    }
+
+    /**
      * Possibility to mock isAdmin() function as we do not extend oxsuperconfig.
      *
      * @return bool
@@ -330,7 +340,7 @@ class SystemRequirements
      */
     protected function _getShopHostInfoFromConfig()
     {
-        $sShopURL = Registry::getConfig()->getConfigParam('sShopURL');
+        $sShopURL = $this->getConfig()->getConfigParam('sShopURL');
         if (preg_match('#^(https?://)?([^/:]+)(:([0-9]+))?(/.*)?$#i', $sShopURL, $m)) {
             $sHost = $m[2];
             $iPort = (int) $m[4];
@@ -359,7 +369,7 @@ class SystemRequirements
      */
     protected function _getShopSSLHostInfoFromConfig()
     {
-        $sSSLShopURL = Registry::getConfig()->getConfigParam('sSSLShopURL');
+        $sSSLShopURL = $this->getConfig()->getConfigParam('sSSLShopURL');
         if (preg_match('#^(https?://)?([^/:]+)(:([0-9]+))?(/.*)?$#i', $sSSLShopURL, $m)) {
             $sHost = $m[2];
             $iPort = (int) $m[4];
@@ -741,7 +751,7 @@ class SystemRequirements
      */
     public function checkIniSet()
     {
-        return (@ini_set('memory_limit', @ini_get('memory_limit')) !== false) ? 2 : 0;
+        return (@ini_set('session.name', 'sid') !== false) ? 2 : 0;
     }
 
     /**
@@ -799,7 +809,7 @@ class SystemRequirements
      */
     public function checkCollation()
     {
-        $myConfig = Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         $aCollations = [];
         $sCollation = '';
@@ -1052,10 +1062,10 @@ class SystemRequirements
      */
     protected function _checkTemplateBlock($sTemplate, $sBlockName)
     {
-        $sTplFile = Registry::getConfig()->getTemplatePath($sTemplate, false);
+        $sTplFile = $this->getConfig()->getTemplatePath($sTemplate, false);
         if (!$sTplFile || !file_exists($sTplFile)) {
             // check if file is in admin theme
-            $sTplFile = Registry::getConfig()->getTemplatePath($sTemplate, true);
+            $sTplFile = $this->getConfig()->getTemplatePath($sTemplate, true);
             if (!$sTplFile || !file_exists($sTplFile)) {
                 return false;
             }
@@ -1120,7 +1130,7 @@ class SystemRequirements
     protected function fetchBlockRecords()
     {
         $activeThemeId = oxNew(\OxidEsales\Eshop\Core\Theme::class)->getActiveThemeId();
-        $config = Registry::getConfig();
+        $config = $this->getConfig();
         $database = \OxidEsales\Eshop\Core\DatabaseProvider::getDb(\OxidEsales\Eshop\Core\DatabaseProvider::FETCH_MODE_ASSOC);
 
         $query = "select * from oxtplblocks where oxactive=1 and oxshopid=? and oxtheme in ('', ?)";

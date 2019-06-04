@@ -232,8 +232,7 @@ class RecommendationList extends \OxidEsales\Eshop\Core\Model\BaseModel implemen
      */
     public function getRecommListsByIds($aArticleIds)
     {
-        /*if (is_array($aArticleIds) && count($aArticleIds)) {*/
-        if (!empty($aArticleIds)) {
+        if (count($aArticleIds)) {
             startProfile(__FUNCTION__);
 
             $sIds = implode(",", \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->quoteArray($aArticleIds));
@@ -241,8 +240,8 @@ class RecommendationList extends \OxidEsales\Eshop\Core\Model\BaseModel implemen
             $oRecommList = oxNew(\OxidEsales\Eshop\Core\Model\ListModel::class);
             $oRecommList->init('oxrecommlist');
 
-            $iShopId = \OxidEsales\Eshop\Core\Registry::getConfig()->getShopId();
-            $iCnt = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('iNrofCrossellArticles');
+            $iShopId = $this->getConfig()->getShopId();
+            $iCnt = $this->getConfig()->getConfigParam('iNrofCrossellArticles');
 
             $oRecommList->setSqlLimit(0, $iCnt);
 
@@ -327,7 +326,7 @@ class RecommendationList extends \OxidEsales\Eshop\Core\Model\BaseModel implemen
             $iActPage = ($iActPage < 0) ? 0 : $iActPage;
 
             // load only lists which we show on screen
-            $iNrofCatArticles = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('iNrofCatArticles');
+            $iNrofCatArticles = $this->getConfig()->getConfigParam('iNrofCatArticles');
             $iNrofCatArticles = $iNrofCatArticles ? $iNrofCatArticles : 10;
 
             $oRecommList = oxNew(\OxidEsales\Eshop\Core\Model\ListModel::class);
@@ -369,7 +368,7 @@ class RecommendationList extends \OxidEsales\Eshop\Core\Model\BaseModel implemen
      */
     protected function _getSearchSelect($sSearchStr)
     {
-        $iShopId = \OxidEsales\Eshop\Core\Registry::getConfig()->getShopId();
+        $iShopId = $this->getConfig()->getShopId();
         $sSearchStrQuoted = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->quote("%$sSearchStr%");
 
         $sSelect = "select distinct rl.* from oxrecommlists as rl";
@@ -484,7 +483,7 @@ class RecommendationList extends \OxidEsales\Eshop\Core\Model\BaseModel implemen
         $sUrl = '';
         if ($blFull) {
             //always returns shop url, not admin
-            $sUrl = \OxidEsales\Eshop\Core\Registry::getConfig()->getShopUrl($iLang, false);
+            $sUrl = $this->getConfig()->getShopUrl($iLang, false);
         }
 
         return $sUrl . "index.php?cl=recommlist" . ($blAddId ? "&amp;recommid=" . $this->getId() : "");

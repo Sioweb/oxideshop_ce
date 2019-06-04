@@ -41,7 +41,7 @@ class ArticleFiles extends \OxidEsales\Eshop\Application\Controller\Admin\AdminD
     {
         parent::render();
 
-        if (!\OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blEnableDownloads')) {
+        if (!$this->getConfig()->getConfigParam('blEnableDownloads')) {
             \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay('EXCEPTION_DISABLED_DOWNLOADABLE_PRODUCTS');
         }
         $oArticle = $this->getArticle();
@@ -70,7 +70,7 @@ class ArticleFiles extends \OxidEsales\Eshop\Application\Controller\Admin\AdminD
 
         //update article files
         $aArticleFiles = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('article_files');
-        if (is_array($aArticleFiles)) {
+        if (count($aArticleFiles) > 0) {
             foreach ($aArticleFiles as $sArticleFileId => $aArticleFileUpdate) {
                 $oArticleFile = oxNew(\OxidEsales\Eshop\Application\Model\File::class);
                 $oArticleFile->load($sArticleFileId);
@@ -113,7 +113,7 @@ class ArticleFiles extends \OxidEsales\Eshop\Application\Controller\Admin\AdminD
      */
     public function upload()
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         if ($myConfig->isDemoShop()) {
             $oEx = oxNew(\OxidEsales\Eshop\Core\Exception\ExceptionToDisplay::class);
@@ -127,7 +127,7 @@ class ArticleFiles extends \OxidEsales\Eshop\Application\Controller\Admin\AdminD
 
         $aParams = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter("newfile");
         $aParams = $this->_processOptions($aParams);
-        $aNewFile = \OxidEsales\Eshop\Core\Registry::getConfig()->getUploadedFile("newArticleFile");
+        $aNewFile = $this->getConfig()->getUploadedFile("newArticleFile");
 
         //uploading and processing supplied file
         $oArticleFile = oxNew(\OxidEsales\Eshop\Application\Model\File::class);
@@ -162,7 +162,7 @@ class ArticleFiles extends \OxidEsales\Eshop\Application\Controller\Admin\AdminD
      */
     public function deletefile()
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         if ($myConfig->isDemoShop()) {
             $oEx = oxNew(\OxidEsales\Eshop\Core\Exception\ExceptionToDisplay::class);

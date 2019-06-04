@@ -351,6 +351,18 @@ class ArticleSeo extends \OxidEsales\Eshop\Application\Controller\Admin\ObjectSe
     }
 
     /**
+     * Returns id of object which must be saved
+     *
+     * @deprecated since v6.0.0 (2017-12-05); Use getEditObjectId() instead.
+     *
+     * @return string
+     */
+    protected function _getSaveObjectId()
+    {
+        return $this->getEditObjectId();
+    }
+
+    /**
      * Returns TRUE if current seo entry has fixed state
      *
      * @return bool
@@ -361,7 +373,7 @@ class ArticleSeo extends \OxidEsales\Eshop\Application\Controller\Admin\ObjectSe
 
         $sId = $this->_getSaveObjectId();
         $iLang = (int) $this->getEditLang();
-        $iShopId = \OxidEsales\Eshop\Core\Registry::getConfig()->getShopId();
+        $iShopId = $this->getConfig()->getShopId();
         $sParam = $this->processParam($this->getActCatId());
 
         $sQ = "select oxfixed from oxseo where

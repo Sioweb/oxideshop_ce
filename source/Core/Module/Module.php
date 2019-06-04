@@ -219,7 +219,7 @@ class Module extends \OxidEsales\Eshop\Core\Base
         $moduleFile = $module;
         $moduleId = $this->getIdFromExtension($module);
         if (!$moduleId) {
-            $modulePaths = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aModulePaths');
+            $modulePaths = $this->getConfig()->getConfigParam('aModulePaths');
 
             if (is_array($modulePaths)) {
                 foreach ($modulePaths as $id => $path) {
@@ -267,7 +267,7 @@ class Module extends \OxidEsales\Eshop\Core\Base
         }
 
         $moduleId = '';
-        $extensions = (array) \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aModuleExtensions');
+        $extensions = (array) $this->getConfig()->getConfigParam('aModuleExtensions');
         foreach ($extensions as $id => $moduleClasses) {
             if (in_array($className, $moduleClasses)) {
                 $moduleId = $id;
@@ -399,7 +399,7 @@ class Module extends \OxidEsales\Eshop\Core\Base
         $sModulePath = (isset($aModulePaths[$sModuleId])) ? $aModulePaths[$sModuleId] : '';
 
         // if still no module dir, try using module ID as dir name
-        if (!$sModulePath && is_dir(\OxidEsales\Eshop\Core\Registry::getConfig()->getModulesDir() . $sModuleId)) {
+        if (!$sModulePath && is_dir($this->getConfig()->getModulesDir() . $sModuleId)) {
             $sModulePath = $sModuleId;
         }
 
@@ -420,7 +420,7 @@ class Module extends \OxidEsales\Eshop\Core\Base
         }
 
         if ($sModuleDir = $this->getModulePath($sModuleId)) {
-            return \OxidEsales\Eshop\Core\Registry::getConfig()->getModulesDir() . $sModuleDir;
+            return $this->getConfig()->getModulesDir() . $sModuleDir;
         }
 
         return false;
@@ -433,7 +433,7 @@ class Module extends \OxidEsales\Eshop\Core\Base
      */
     public function getModulePaths()
     {
-        return \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aModulePaths');
+        return $this->getConfig()->getConfigParam('aModulePaths');
     }
 
     /**
@@ -455,7 +455,7 @@ class Module extends \OxidEsales\Eshop\Core\Base
             return [];
         }
 
-        $sShopId = \OxidEsales\Eshop\Core\Registry::getConfig()->getShopId();
+        $sShopId = $this->getConfig()->getShopId();
 
         return \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->getCol("SELECT oxtemplate FROM oxtplblocks WHERE oxmodule = '$sModuleId' AND oxshopid = '$sShopId'");
     }
@@ -516,7 +516,7 @@ class Module extends \OxidEsales\Eshop\Core\Base
     {
         $aModuleExtensions = $this->getExtensions();
 
-        $aInstalledExtensions = \OxidEsales\Eshop\Core\Registry::getConfig()->getModulesWithExtendedClass();
+        $aInstalledExtensions = $this->getConfig()->getModulesWithExtendedClass();
         $iModuleExtensionsCount = $this->_countExtensions($aModuleExtensions);
         $iActivatedModuleExtensionsCount = $this->_countActivatedExtensions($aModuleExtensions, $aInstalledExtensions);
 
@@ -532,7 +532,7 @@ class Module extends \OxidEsales\Eshop\Core\Base
      */
     protected function _isInDisabledList($sId)
     {
-        return in_array($sId, (array) \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aDisabledModules'));
+        return in_array($sId, (array) $this->getConfig()->getConfigParam('aDisabledModules'));
     }
 
     /**
@@ -594,7 +594,7 @@ class Module extends \OxidEsales\Eshop\Core\Base
     private function backwardsCompatibleGetModuleIdByClassName($classPath)
     {
         $moduleId = '';
-        $extensions = (array) \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aModuleExtensions');
+        $extensions = (array) $this->getConfig()->getConfigParam('aModuleExtensions');
         foreach ($extensions as $id => $moduleClasses) {
             if (in_array($classPath, $moduleClasses)) {
                 $moduleId = $id;

@@ -335,7 +335,7 @@ class Config extends \OxidEsales\Eshop\Core\Base
      * Stores config parameter value in config
      *
      * @param string $name  config parameter name
-     * @param mixed  $value config parameter value
+     * @param string $value config parameter value
      */
     public function setConfigParam($name, $value)
     {
@@ -360,55 +360,9 @@ class Config extends \OxidEsales\Eshop\Core\Base
     }
 
     /**
-     * Initialize configuration variables
-     *
-     * @throws \OxidEsales\Eshop\Core\Exception\DatabaseException
-     * @param int $shopID
-     */
-    public function initVars($shopID)
-    {
-        $this->_loadVarsFromFile();
-
-        $this->_setDefaults();
-
-        $configLoaded = $this->_loadVarsFromDb($shopID);
-        // loading shop config
-        if (empty($shopID) || !$configLoaded) {
-            // if no config values where loaded (some problems with DB), throwing an exception
-            $exception = new \OxidEsales\Eshop\Core\Exception\DatabaseException(
-                "Unable to load shop config values from database",
-                0,
-                new \Exception()
-            );
-            throw $exception;
-        }
-
-        // loading theme config options
-        $this->_loadVarsFromDb($shopID, null, Config::OXMODULE_THEME_PREFIX . $this->getConfigParam('sTheme'));
-
-        // checking if custom theme (which has defined parent theme) config options should be loaded over parent theme (#3362)
-        if ($this->getConfigParam('sCustomTheme')) {
-            $this->_loadVarsFromDb($shopID, null, Config::OXMODULE_THEME_PREFIX . $this->getConfigParam('sCustomTheme'));
-        }
-
-        // loading modules config
-        $this->_loadVarsFromDb($shopID, null, Config::OXMODULE_MODULE_PREFIX);
-
-        $this->loadAdditionalConfiguration();
-
-        // Admin handling
-        $this->setConfigParam('blAdmin', isAdmin());
-
-        if (defined('OX_ADMIN_DIR')) {
-            $this->setConfigParam('sAdminDir', OX_ADMIN_DIR);
-        }
-
-        $this->_loadVarsFromFile();
-    }
-
-    /**
      * Starts session manager
      *
+     * @throws oxConnectionException
      * @return null
      */
     public function init()
@@ -419,12 +373,49 @@ class Config extends \OxidEsales\Eshop\Core\Base
         }
         $this->_blInit = true;
 
-        try {
-            // config params initialization
-            $this->initVars($this->getShopId());
+        $this->_loadVarsFromFile();
 
-            // application initialization
+        $this->_setDefaults();
+
+        try {
+            $shopID = $this->getShopId();
+            $configLoaded = $this->_loadVarsFromDb($shopID);
+            // loading shop config
+            if (empty($shopID) || !$configLoaded) {
+                // if no config values where loaded (some problems with DB), throwing an exception
+                $exception = new \OxidEsales\Eshop\Core\Exception\DatabaseException(
+                    "Unable to load shop config values from database",
+                    0,
+                    new \Exception()
+                );
+                throw $exception;
+            }
+
+            // loading theme config options
+            $this->_loadVarsFromDb($shopID, null, Config::OXMODULE_THEME_PREFIX . $this->getConfigParam('sTheme'));
+
+            // checking if custom theme (which has defined parent theme) config options should be loaded over parent theme (#3362)
+            if ($this->getConfigParam('sCustomTheme')) {
+                $this->_loadVarsFromDb($shopID, null, Config::OXMODULE_THEME_PREFIX . $this->getConfigParam('sCustomTheme'));
+            }
+
+            // loading modules config
+            $this->_loadVarsFromDb($shopID, null, Config::OXMODULE_MODULE_PREFIX);
+
+            $this->loadAdditionalConfiguration();
+
             $this->initializeShop();
+
+            // Admin handling
+            $this->setConfigParam('blAdmin', isAdmin());
+
+            if (defined('OX_ADMIN_DIR')) {
+                $this->setConfigParam('sAdminDir', OX_ADMIN_DIR);
+            }
+
+            $this->_loadVarsFromFile();
+
+            //application initialization
             $this->_oStart = oxNew(\OxidEsales\Eshop\Application\Controller\OxidStartController::class);
             $this->_oStart->appInit();
         } catch (\OxidEsales\Eshop\Core\Exception\DatabaseException $exception) {
@@ -507,7 +498,7 @@ class Config extends \OxidEsales\Eshop\Core\Base
 
         // #1173M  for EE - not all pic are deleted
         if (is_null($this->getConfigParam('iPicCount'))) {
-            $this->setConfigParam('iPicCount', 12);
+            $this->setConfigParam('iPicCount', 7);
         }
 
         if (is_null($this->getConfigParam('iZoomPicCount'))) {
@@ -1495,7 +1486,7 @@ class Config extends \OxidEsales\Eshop\Core\Base
 
         if (!$finalTemplatePath) {
             $templatePathCalculator = $this->getModuleTemplatePathCalculator();
-            $templatePathCalculator->setModulesPath($this->getModulesDir());
+            $templatePathCalculator->setModulesPath($this->getConfig()->getModulesDir());
             try {
                 $finalTemplatePath = $templatePathCalculator->calculateModuleTemplatePath($templateName);
             } catch (Exception $e) {
@@ -1729,6 +1720,30 @@ class Config extends \OxidEsales\Eshop\Core\Base
     public function getVersion()
     {
         return oxNew(\OxidEsales\Eshop\Core\ShopVersion::class)->getVersion();
+    }
+
+    /**
+     * Returns build revision number or false on read error.
+     *
+     * @deprecated since v6.0.0 (2017-12-04); This functionality will be removed completely
+     *
+     * @return bool|string
+     */
+    public function getRevision()
+    {
+        $fileName = $this->getConfigParam('sShopDir') . "/pkg.rev";
+
+        $rev = false;
+
+        if (file_exists($fileName) && is_readable($fileName)) {
+            $rev = trim(file_get_contents($fileName));
+        }
+
+        if (!$rev) {
+            return false;
+        }
+
+        return $rev;
     }
 
     /**

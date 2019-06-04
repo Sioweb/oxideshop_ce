@@ -27,7 +27,7 @@ class ArticleStock extends \OxidEsales\Eshop\Application\Controller\Admin\AdminD
      */
     public function render()
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         parent::render();
 
@@ -126,7 +126,7 @@ class ArticleStock extends \OxidEsales\Eshop\Application\Controller\Admin\AdminD
      */
     public function addprice($sOXID = null, $aUpdateParams = null)
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         $this->resetContentCache();
 

@@ -23,13 +23,6 @@ class BaseController extends \OxidEsales\Eshop\Core\Base
     protected $_aViewData = [];
 
     /**
-     * View parameters array
-     *
-     * @var array
-     */
-    protected $_aViewParams = [];
-
-    /**
      * Location of a executed class file.
      *
      * @var string
@@ -46,14 +39,14 @@ class BaseController extends \OxidEsales\Eshop\Core\Base
     /**
      * If this is a component we will have our parent view here.
      *
-     * @var \OxidEsales\Eshop\Core\Controller\BaseController|null
+     * @var \OxidEsales\Eshop\Core\Controller\BaseController
      */
     protected $_oParent = null;
 
     /**
      * Flag if this object is a component or not
      *
-     * @var bool|null
+     * @var bool
      */
     protected $_blIsComponent = false;
 
@@ -202,7 +195,7 @@ class BaseController extends \OxidEsales\Eshop\Core\Base
      */
     public function getViewParameter($sKey)
     {
-        return (isset($this->_aViewParams[$sKey])) ? $this->_aViewParams[$sKey] : \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter($sKey);
+        return (isset($this->_aViewParams[$sKey])) ? $this->_aViewParams[$sKey] : $this->getConfig()->getRequestParameter($sKey);
     }
 
     /**
@@ -276,7 +269,7 @@ class BaseController extends \OxidEsales\Eshop\Core\Base
      * Sets value to parameter used by template engine.
      *
      * @param string $sPara  name of parameter to pass
-     * @param mixed  $sValue value of parameter
+     * @param string $sValue value of parameter
      */
     public function addTplParam($sPara, $sValue)
     {
@@ -293,7 +286,7 @@ class BaseController extends \OxidEsales\Eshop\Core\Base
         if ($sBelboon = $this->getSession()->getVariable('belboon')) {
             return $sBelboon;
         }
-        if (($sBelboon = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('belboon'))) {
+        if (($sBelboon = $this->getConfig()->getRequestParameter('belboon'))) {
             $this->getSession()->setVariable('belboon', $sBelboon);
         }
 
@@ -430,12 +423,9 @@ class BaseController extends \OxidEsales\Eshop\Core\Base
      */
     public function getViewDataElement($sParamId = null)
     {
-        $return = null;
         if ($sParamId && isset($this->_aViewData[$sParamId])) {
-            $return = $this->_aViewData[$sParamId];
+            return $this->_aViewData[$sParamId];
         }
-
-        return $return;
     }
 
     /**
@@ -480,7 +470,8 @@ class BaseController extends \OxidEsales\Eshop\Core\Base
 
     /**
      * Set parent object. If this is a component we will have our parent view here.
-     * @param \OxidEsales\Eshop\Core\Controller\BaseController $oParent parent object
+     *
+     * @param object $oParent parent object
      */
     public function setParent($oParent = null)
     {
@@ -490,7 +481,7 @@ class BaseController extends \OxidEsales\Eshop\Core\Base
     /**
      * Get parent object
      *
-     * @return \OxidEsales\Eshop\Core\Controller\BaseController|null
+     * @return BaseController
      */
     public function getParent()
     {
@@ -500,7 +491,7 @@ class BaseController extends \OxidEsales\Eshop\Core\Base
     /**
      * Set flag if this object is a component or not
      *
-     * @param bool|null $blIsComponent flag if this object is a component
+     * @param bool $blIsComponent flag if this object is a component
      */
     public function setIsComponent($blIsComponent = null)
     {
@@ -510,7 +501,7 @@ class BaseController extends \OxidEsales\Eshop\Core\Base
     /**
      * Get flag if this object is a component
      *
-     * @return bool|null
+     * @return bool
      */
     public function getIsComponent()
     {
@@ -561,7 +552,7 @@ class BaseController extends \OxidEsales\Eshop\Core\Base
     protected function _executeNewAction($sNewAction)
     {
         if ($sNewAction) {
-            $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+            $myConfig = $this->getConfig();
 
             // page parameters is the part which goes after '?'
             $params = explode('?', $sNewAction);
@@ -655,7 +646,19 @@ class BaseController extends \OxidEsales\Eshop\Core\Base
      */
     public function getShopEdition()
     {
-        return \OxidEsales\Eshop\Core\Registry::getConfig()->getEdition();
+        return $this->getConfig()->getEdition();
+    }
+
+    /**
+     * Returns shop revision
+     *
+     * @deprecated since v6.0.0 (2017-12-04); This functionality will be removed completely
+     *
+     * @return bool|string
+     */
+    public function getRevision()
+    {
+        return $this->getConfig()->getRevision();
     }
 
     /**
@@ -665,7 +668,7 @@ class BaseController extends \OxidEsales\Eshop\Core\Base
      */
     public function getPackageInfo()
     {
-        return \OxidEsales\Eshop\Core\Registry::getConfig()->getPackageInfo();
+        return $this->getConfig()->getPackageInfo();
     }
 
     /**
@@ -697,7 +700,7 @@ class BaseController extends \OxidEsales\Eshop\Core\Base
     public function isDemoVersion()
     {
         if ($this->_blDemoVersion == null) {
-            $this->_blDemoVersion = \OxidEsales\Eshop\Core\Registry::getConfig()->detectVersion() == 1;
+            $this->_blDemoVersion = $this->getConfig()->detectVersion() == 1;
         }
 
         return $this->_blDemoVersion;
@@ -710,7 +713,7 @@ class BaseController extends \OxidEsales\Eshop\Core\Base
      */
     public function isBetaVersion()
     {
-        return (stripos(\OxidEsales\Eshop\Core\Registry::getConfig()->getVersion(), 'beta') !== false);
+        return (stripos($this->getConfig()->getVersion(), 'beta') !== false);
     }
 
     /**
@@ -720,7 +723,7 @@ class BaseController extends \OxidEsales\Eshop\Core\Base
      */
     public function isRCVersion()
     {
-        return (stripos(\OxidEsales\Eshop\Core\Registry::getConfig()->getVersion(), 'rc') !== false);
+        return (stripos($this->getConfig()->getVersion(), 'rc') !== false);
     }
 
     /**
@@ -741,7 +744,7 @@ class BaseController extends \OxidEsales\Eshop\Core\Base
     public function isDemoShop()
     {
         if ($this->_blDemoShop == null) {
-            $this->_blDemoShop = \OxidEsales\Eshop\Core\Registry::getConfig()->isDemoShop();
+            $this->_blDemoShop = $this->getConfig()->isDemoShop();
         }
 
         return $this->_blDemoShop;
@@ -807,7 +810,7 @@ class BaseController extends \OxidEsales\Eshop\Core\Base
      */
     public function getCategoryId()
     {
-        if ($this->_sCategoryId == null && ($sCatId = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('cnid'))) {
+        if ($this->_sCategoryId == null && ($sCatId = $this->getConfig()->getRequestParameter('cnid'))) {
             $this->_sCategoryId = $sCatId;
         }
 
@@ -867,17 +870,15 @@ class BaseController extends \OxidEsales\Eshop\Core\Base
      * This basically happens on session change,
      * when session cookie is not equals to the actual session ID.
      *
-     * @return string|null
+     * @return string
      */
     public function getSidForWidget()
     {
         $oSession = $this->getSession();
-        $sid = null;
-        if (!$oSession->isActualSidInCookie()) {
-            $sid = $oSession->getId();
-        }
 
-        return $sid;
+        if (!$oSession->isActualSidInCookie()) {
+            return $oSession->getId();
+        }
     }
 
     /**
@@ -900,18 +901,5 @@ class BaseController extends \OxidEsales\Eshop\Core\Base
     protected function getContainer()
     {
         return \OxidEsales\EshopCommunity\Internal\Application\ContainerFactory::getInstance()->getContainer();
-    }
-
-    /**
-     * Config instance getter
-     *
-     * @deprecated since b-dev (2018-11-14); This method will be removed completely. Extend your views accordingly and use
-     *             $this->setViewData('someVar', 'some Value') to provide the data to your templates
-     *
-     * @return \OxidEsales\Eshop\Core\Config
-     */
-    public function getConfig()
-    {
-        return \OxidEsales\Eshop\Core\Registry::getConfig();
     }
 }

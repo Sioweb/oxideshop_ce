@@ -53,15 +53,16 @@ class DeliveryArticlesAjax extends \OxidEsales\Eshop\Application\Controller\Admi
      */
     protected function _getQuery()
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
         $oDb = \OxidEsales\Eshop\Core\DatabaseProvider::getDb();
 
         // looking for table/view
         $sArtTable = $this->_getViewName('oxarticles');
+        $sCatTable = $this->_getViewName('oxcategories');
         $sO2CView = $this->_getViewName('oxobject2category');
 
-        $sDelId = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('oxid');
-        $sSynchDelId = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('synchoxid');
+        $sDelId = $this->getConfig()->getRequestParameter('oxid');
+        $sSynchDelId = $this->getConfig()->getRequestParameter('synchoxid');
 
         // category selected or not ?
         if (!$sDelId) {
@@ -113,7 +114,7 @@ class DeliveryArticlesAjax extends \OxidEsales\Eshop\Application\Controller\Admi
     {
         $aChosenArt = $this->_getActionIds('oxobject2delivery.oxid');
         // removing all
-        if (\OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('all')) {
+        if ($this->getConfig()->getRequestParameter('all')) {
             $sQ = parent::_addFilter("delete oxobject2delivery.* " . $this->_getQuery());
             \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->Execute($sQ);
         } elseif (is_array($aChosenArt)) {
@@ -128,10 +129,10 @@ class DeliveryArticlesAjax extends \OxidEsales\Eshop\Application\Controller\Admi
     public function addArtToDel()
     {
         $aChosenArt = $this->_getActionIds('oxarticles.oxid');
-        $soxId = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('synchoxid');
+        $soxId = $this->getConfig()->getRequestParameter('synchoxid');
 
         // adding
-        if (\OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('all')) {
+        if ($this->getConfig()->getRequestParameter('all')) {
             $sArtTable = $this->_getViewName('oxarticles');
             $aChosenArt = $this->_getAll($this->_addFilter("select $sArtTable.oxid " . $this->_getQuery()));
         }

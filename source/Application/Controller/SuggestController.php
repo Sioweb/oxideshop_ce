@@ -103,6 +103,7 @@ class SuggestController extends \OxidEsales\Eshop\Application\Controller\Fronten
             }
         }
 
+        $oUtils = \OxidEsales\Eshop\Core\Registry::getUtils();
         if (!oxNew(\OxidEsales\Eshop\Core\MailValidator::class)->isValidEmail($aParams["rec_email"]) || !oxNew(\OxidEsales\Eshop\Core\MailValidator::class)->isValidEmail($aParams["send_email"])) {
             $oUtilsView->addErrorToDisplay('SUGGEST_INVALIDMAIL');
 
@@ -155,7 +156,7 @@ class SuggestController extends \OxidEsales\Eshop\Application\Controller\Fronten
         if ($this->_oProduct === null) {
             $this->_oProduct = false;
 
-            if ($sProductId = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('anid')) {
+            if ($sProductId = $this->getConfig()->getRequestParameter('anid')) {
                 $oProduct = oxNew(\OxidEsales\Eshop\Application\Model\Article::class);
                 $oProduct->load($sProductId);
                 $this->_oProduct = $oProduct;
@@ -290,8 +291,8 @@ class SuggestController extends \OxidEsales\Eshop\Application\Controller\Fronten
      */
     private function redirectToHomeIfDisabled()
     {
-        if (\OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blAllowSuggestArticle') !== true) {
-            Registry::getUtils()->redirect(\OxidEsales\Eshop\Core\Registry::getConfig()->getShopHomeUrl(), true, 301);
+        if ($this->getConfig()->getConfigParam('blAllowSuggestArticle') !== true) {
+            Registry::getUtils()->redirect($this->getConfig()->getShopHomeUrl(), true, 301);
         }
     }
 }

@@ -53,7 +53,7 @@ class UserGroupMainAjax extends \OxidEsales\Eshop\Application\Controller\Admin\L
      */
     protected function _getQuery()
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         // looking for table/view
         $sUserTable = $this->_getViewName('oxuser');

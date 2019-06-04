@@ -36,7 +36,7 @@ class LanguageList extends \OxidEsales\Eshop\Application\Controller\Admin\AdminL
      */
     public function deleteEntry()
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
         $sOxId = $this->getEditObjectId();
 
         $aLangData['params'] = $myConfig->getConfigParam('aLanguageParams');
@@ -94,9 +94,9 @@ class LanguageList extends \OxidEsales\Eshop\Application\Controller\Admin\AdminL
      */
     protected function _getLanguagesList()
     {
-        $aLangParams = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aLanguageParams');
+        $aLangParams = $this->getConfig()->getConfigParam('aLanguageParams');
         $aLanguages = \OxidEsales\Eshop\Core\Registry::getLang()->getLanguageArray();
-        $sDefaultLang = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('sDefaultLang');
+        $sDefaultLang = $this->getConfig()->getConfigParam('sDefaultLang');
 
         foreach ($aLanguages as $sKey => $sValue) {
             $sOxId = $sValue->oxid;

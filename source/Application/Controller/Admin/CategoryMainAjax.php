@@ -55,7 +55,7 @@ class CategoryMainAjax extends \OxidEsales\Eshop\Application\Controller\Admin\Li
      */
     protected function _getQuery()
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         $sArticleTable = $this->_getViewName('oxarticles');
         $sO2CView = $this->_getViewName('oxobject2category');
@@ -63,6 +63,8 @@ class CategoryMainAjax extends \OxidEsales\Eshop\Application\Controller\Admin\Li
         $sOxid = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('oxid');
         $sSynchOxid = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('synchoxid');
         $oDb = \OxidEsales\Eshop\Core\DatabaseProvider::getDb();
+
+        $sShopID = $myConfig->getShopId();
 
         // category selected or not ?
         if (!$sOxid && $sSynchOxid) {
@@ -101,7 +103,7 @@ class CategoryMainAjax extends \OxidEsales\Eshop\Application\Controller\Admin\Li
         $sQ = parent::_addFilter($sQ);
 
         // display variants or not ?
-        if (!\OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blVariantsSelection')) {
+        if (!$this->getConfig()->getConfigParam('blVariantsSelection')) {
             $sQ .= " and {$sArtTable}.oxparentid = '' ";
         }
 
@@ -116,7 +118,7 @@ class CategoryMainAjax extends \OxidEsales\Eshop\Application\Controller\Admin\Li
      */
     public function addArticle()
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         $aArticles = $this->_getActionIds('oxarticles.oxid');
         $sCategoryID = $myConfig->getRequestParameter('synchoxid');
@@ -136,6 +138,9 @@ class CategoryMainAjax extends \OxidEsales\Eshop\Application\Controller\Admin\Li
                 $sO2CView = $this->_getViewName('oxobject2category');
 
                 $oNew = oxNew(\OxidEsales\Eshop\Application\Model\Object2Category::class);
+                $myUtilsObject = \OxidEsales\Eshop\Core\Registry::getUtilsObject();
+                $oActShop = $myConfig->getActiveShop();
+
                 $sProdIds = "";
                 foreach ($aArticles as $sAdd) {
                     // check, if it's already in, then don't add it again
@@ -234,7 +239,8 @@ class CategoryMainAjax extends \OxidEsales\Eshop\Application\Controller\Admin\Li
         }
 
         // adding
-        /*if (is_array($aArticles) && count($aArticles)) {*/
+        /** replace-in_array&count */
+        /** if (is_array($aArticles) && count($aArticles)) { */
         if (!empty($aArticles)) {
             $this->removeCategoryArticles($aArticles, $sCategoryID);
         }
@@ -279,7 +285,7 @@ class CategoryMainAjax extends \OxidEsales\Eshop\Application\Controller\Admin\Li
         $where = "where oxcatnid=" . $db->quote($categoryID);
 
         $whereProductIdIn = " oxobjectid in ( {$prodIds} )";
-        if (!\OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blVariantsSelection')) {
+        if (!$this->getConfig()->getConfigParam('blVariantsSelection')) {
             $whereProductIdIn = "( " . $whereProductIdIn . " OR oxobjectid in (
                                         select oxid from oxarticles where oxparentid in ({$prodIds})
                                         )

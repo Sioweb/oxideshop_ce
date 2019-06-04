@@ -70,7 +70,7 @@ class WidgetControl extends \OxidEsales\Eshop\Core\ShopControl
      */
     protected function _runLast()
     {
-        $oConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $oConfig = $this->getConfig();
 
         if ($oConfig->hasActiveViewsChain()) {
             // Removing current active view.
@@ -100,7 +100,7 @@ class WidgetControl extends \OxidEsales\Eshop\Core\ShopControl
      */
     protected function _initializeViewObject($class, $function, $parameters = null, $viewsChain = null)
     {
-        $config = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $config = $this->getConfig();
         $activeViewsIds = $config->getActiveViewsIds();
         $activeViewsIds = array_map("strtolower", $activeViewsIds);
         $classKey = Registry::getControllerClassNameResolver()->getIdByClassName($class);

@@ -120,7 +120,7 @@ class OrderController extends \OxidEsales\Eshop\Application\Controller\FrontendC
     public function init()
     {
         // disabling performance control variable
-        \OxidEsales\Eshop\Core\Registry::getConfig()->setConfigParam('bl_perfCalcVatOnlyForBasketOrder', false);
+        $this->getConfig()->setConfigParam('bl_perfCalcVatOnlyForBasketOrder', false);
 
         // recalc basket cause of payment stuff
         if ($oBasket = $this->getBasket()) {
@@ -144,7 +144,7 @@ class OrderController extends \OxidEsales\Eshop\Application\Controller\FrontendC
     {
         if ($this->getIsOrderStep()) {
             $oBasket = $this->getBasket();
-            $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+            $myConfig = $this->getConfig();
 
             if ($myConfig->getConfigParam('blPsBasketReservationEnabled')) {
                 $this->getSession()->getBasketReservations()->renewExpiration();
@@ -252,7 +252,7 @@ class OrderController extends \OxidEsales\Eshop\Application\Controller\FrontendC
             if ($sPaymentid && $oPayment->load($sPaymentid) &&
                 $oPayment->isValidPayment(
                     \OxidEsales\Eshop\Core\Registry::getSession()->getVariable('dynvalue'),
-                    \OxidEsales\Eshop\Core\Registry::getConfig()->getShopId(),
+                    $this->getConfig()->getShopId(),
                     $oUser,
                     $oBasket->getPriceForPayment(),
                     \OxidEsales\Eshop\Core\Registry::getSession()->getVariable('sShipSet')
@@ -371,7 +371,7 @@ class OrderController extends \OxidEsales\Eshop\Application\Controller\FrontendC
     {
         if ($this->_blConfirmAGB === null) {
             $this->_blConfirmAGB = false;
-            $this->_blConfirmAGB = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blConfirmAGB');
+            $this->_blConfirmAGB = $this->getConfig()->getConfigParam('blConfirmAGB');
         }
 
         return $this->_blConfirmAGB;
@@ -396,7 +396,7 @@ class OrderController extends \OxidEsales\Eshop\Application\Controller\FrontendC
     {
         if ($this->_blShowOrderButtonOnTop === null) {
             $this->_blShowOrderButtonOnTop = false;
-            $this->_blShowOrderButtonOnTop = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blShowOrderButtonOnTop');
+            $this->_blShowOrderButtonOnTop = $this->getConfig()->getConfigParam('blShowOrderButtonOnTop');
         }
 
         return $this->_blShowOrderButtonOnTop;
@@ -503,7 +503,7 @@ class OrderController extends \OxidEsales\Eshop\Application\Controller\FrontendC
             case ($iSuccess === \OxidEsales\Eshop\Application\Model\Order::ORDER_STATE_MAILINGERROR):
                 $sNextStep = 'thankyou?mailerror=1';
                 break;
-            case ($iSuccess === \OxidEsales\Eshop\Application\Model\Order::ORDER_STATE_INVALIDDELADDRESSCHANGED):
+            case ($iSuccess === \OxidEsales\Eshop\Application\Model\Order::ORDER_STATE_INVALIDDElADDRESSCHANGED):
                 $sNextStep = 'order?iAddressError=1';
                 break;
             case ($iSuccess === \OxidEsales\Eshop\Application\Model\Order::ORDER_STATE_BELOWMINPRICE):
@@ -541,7 +541,7 @@ class OrderController extends \OxidEsales\Eshop\Application\Controller\FrontendC
     protected function _validateTermsAndConditions()
     {
         $blValid = true;
-        $oConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $oConfig = $this->getConfig();
 
         if ($oConfig->getConfigParam('blConfirmAGB') && !$oConfig->getRequestParameter('ord_agb')) {
             $blValid = false;

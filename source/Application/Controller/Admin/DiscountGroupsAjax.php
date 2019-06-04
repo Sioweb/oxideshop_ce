@@ -43,7 +43,7 @@ class DiscountGroupsAjax extends \OxidEsales\Eshop\Application\Controller\Admin\
      */
     protected function _getQuery()
     {
-        $oConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $oConfig = $this->getConfig();
         // active AJAX component
         $sGroupTable = $this->_getViewName('oxgroups');
         $oDb = \OxidEsales\Eshop\Core\DatabaseProvider::getDb();
@@ -74,7 +74,7 @@ class DiscountGroupsAjax extends \OxidEsales\Eshop\Application\Controller\Admin\
      */
     public function removeDiscGroup()
     {
-        $config = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $config = $this->getConfig();
 
         $groupIds = $this->_getActionIds('oxobject2discount.oxid');
         if ($config->getRequestParameter('all')) {
@@ -92,7 +92,7 @@ class DiscountGroupsAjax extends \OxidEsales\Eshop\Application\Controller\Admin\
      */
     public function addDiscGroup()
     {
-        $config = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $config = $this->getConfig();
         $groupIds = $this->_getActionIds('oxgroups.oxid');
         $discountId = $config->getRequestParameter('synchoxid');
 

@@ -379,7 +379,7 @@ class BasketItem extends \OxidEsales\Eshop\Core\Base
         if ($this->getStockCheckStatus() == true) {
             $dArtStockAmount = $this->getSession()->getBasket()->getArtStockInBasket($oArticle->getId(), $sItemKey);
             $selectForUpdate = false;
-            if (\OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blPsBasketReservationEnabled')) {
+            if ($this->getConfig()->getConfigParam('blPsBasketReservationEnabled')) {
                 $selectForUpdate = true;
             }
             $iOnStock = $oArticle->checkForStock($this->_dAmount, $dArtStockAmount, $selectForUpdate);
@@ -443,7 +443,7 @@ class BasketItem extends \OxidEsales\Eshop\Core\Base
     public function getIconUrl()
     {
         // icon url must be (re)loaded in case icon is not set or shop was switched between ssl/nonssl
-        if ($this->_sIconUrl === null || $this->_blSsl != \OxidEsales\Eshop\Core\Registry::getConfig()->isSsl()) {
+        if ($this->_sIconUrl === null || $this->_blSsl != $this->getConfig()->isSsl()) {
             $this->_sIconUrl = $this->getArticle()->getIconUrl();
         }
 
@@ -717,7 +717,7 @@ class BasketItem extends \OxidEsales\Eshop\Core\Base
      */
     protected function _setArticle($sProductId)
     {
-        $oConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $oConfig = $this->getConfig();
         $oArticle = $this->getArticle(true, $sProductId);
 
         // product ID
@@ -765,7 +765,7 @@ class BasketItem extends \OxidEsales\Eshop\Core\Base
         $this->_sTitle = $oOrderArticle->oxarticles__oxtitle->value;
 
         // shop Ids
-        $this->_sShopId = \OxidEsales\Eshop\Core\Registry::getConfig()->getShopId();
+        $this->_sShopId = $this->getConfig()->getShopId();
         $this->_sNativeShopId = $oOrderArticle->oxarticles__oxshopid->value;
     }
 
@@ -787,7 +787,8 @@ class BasketItem extends \OxidEsales\Eshop\Core\Base
         $this->_aSelList = $aSelList;
 
         //
-        /*if (is_array($this->_aSelList) && count($this->_aSelList)) {*/
+        /** replace-in_array&count */
+        /** if (is_array($this->_aSelList) && count($this->_aSelList)) { */
         if (!empty($this->_aSelList)) {
             foreach ($this->_aSelList as $conkey => $iSel) {
                 $this->_aChosenSelectlist[$conkey] = new stdClass();

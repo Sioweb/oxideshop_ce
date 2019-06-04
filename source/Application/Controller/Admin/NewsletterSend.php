@@ -63,7 +63,7 @@ class NewsletterSend extends \OxidEsales\Eshop\Application\Controller\Admin\News
             $sQGroups = " oxobject2group.oxobjectid is null ";
         }
 
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         $iSendCnt = 0;
         $iMaxCnt = (int) $myConfig->getConfigParam('iCntofMails');

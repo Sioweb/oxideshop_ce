@@ -26,6 +26,7 @@ class PaymentCountry extends \OxidEsales\Eshop\Application\Controller\Admin\Admi
      */
     public function render()
     {
+        $myConfig = $this->getConfig();
         parent::render();
 
         // remove itm from list

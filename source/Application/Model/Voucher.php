@@ -219,7 +219,7 @@ class Voucher extends \OxidEsales\Eshop\Core\Model\BaseModel
     protected function _isAvailablePrice($dPrice)
     {
         $oSeries = $this->getSerie();
-        $oCur = \OxidEsales\Eshop\Core\Registry::getConfig()->getActShopCurrencyObject();
+        $oCur = $this->getConfig()->getActShopCurrencyObject();
         if ($oSeries->oxvoucherseries__oxminimumvalue->value && $dPrice < ($oSeries->oxvoucherseries__oxminimumvalue->value * $oCur->rate)) {
             $oEx = oxNew(\OxidEsales\Eshop\Core\Exception\VoucherException::class);
             $oEx->setMessage('ERROR_MESSAGE_VOUCHER_INCORRECTPRICE');
@@ -278,7 +278,8 @@ class Voucher extends \OxidEsales\Eshop\Core\Model\BaseModel
      */
     protected function _isAvailableWithOtherSeries($aVouchers)
     {
-        /*if (is_array($aVouchers) && count($aVouchers)) {*/
+        /** replace-in_array&count */
+        /** if (is_array($aVouchers) && count($aVouchers)) { */
         if (!empty($aVouchers)) {
             $oSeries = $this->getSerie();
             $sIds = implode(',', \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->quoteArray(array_keys($aVouchers)));
@@ -658,7 +659,7 @@ class Voucher extends \OxidEsales\Eshop\Core\Model\BaseModel
     {
         $oSeries = $this->getSerie();
         if ($oSeries->oxvoucherseries__oxdiscounttype->value == 'absolute') {
-            $oCur = \OxidEsales\Eshop\Core\Registry::getConfig()->getActShopCurrencyObject();
+            $oCur = $this->getConfig()->getActShopCurrencyObject();
             $dDiscount = $oSeries->oxvoucherseries__oxdiscount->value * $oCur->rate;
         } else {
             $dDiscount = $oSeries->oxvoucherseries__oxdiscount->value / 100 * $dPrice;

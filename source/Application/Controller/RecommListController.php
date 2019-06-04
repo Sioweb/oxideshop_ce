@@ -106,7 +106,7 @@ class RecommListController extends \OxidEsales\Eshop\Application\Controller\Arti
     public function render()
     {
         \OxidEsales\Eshop\Application\Controller\FrontendController::render();
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         $this->_iAllArtCnt = 0;
 
@@ -136,7 +136,7 @@ class RecommListController extends \OxidEsales\Eshop\Application\Controller\Arti
         }
 
         if ($oList && $oList->count()) {
-            $iNrofCatArticles = (int) \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('iNrofCatArticles');
+            $iNrofCatArticles = (int) $this->getConfig()->getConfigParam('iNrofCatArticles');
             $iNrofCatArticles = $iNrofCatArticles ? $iNrofCatArticles : 10;
             $this->_iCntPages = ceil($this->_iAllArtCnt / $iNrofCatArticles);
         }
@@ -261,7 +261,7 @@ class RecommListController extends \OxidEsales\Eshop\Application\Controller\Arti
                 $iActPage = ($iActPage < 0) ? 0 : $iActPage;
 
                 // load only lists which we show on screen
-                $iNrofCatArticles = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('iNrofCatArticles');
+                $iNrofCatArticles = $this->getConfig()->getConfigParam('iNrofCatArticles');
                 $iNrofCatArticles = $iNrofCatArticles ? $iNrofCatArticles : 10;
 
                 $this->_aArticleList = $oActiveRecommList->getArticles(
@@ -324,7 +324,7 @@ class RecommListController extends \OxidEsales\Eshop\Application\Controller\Arti
      */
     public function isReviewActive()
     {
-        return \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('bl_perfLoadReviews');
+        return $this->getConfig()->getConfigParam('bl_perfLoadReviews');
     }
 
     /**
@@ -433,7 +433,7 @@ class RecommListController extends \OxidEsales\Eshop\Application\Controller\Arti
         $aPath[0]->oxcategories__oxtitle = new \OxidEsales\Eshop\Core\Field($oLang->translateString('RECOMMLIST'));
 
         if ($sSearchParam = $this->getRecommSearch()) {
-            $shopHomeURL = \OxidEsales\Eshop\Core\Registry::getConfig()->getShopHomeUrl();
+            $shopHomeURL = $this->getConfig()->getShopHomeUrl();
             $sUrl = $shopHomeURL . "cl=recommlist&amp;searchrecomm=" . rawurlencode($sSearchParam);
             $sTitle = $oLang->translateString('RECOMMLIST_SEARCH') . ' "' . $sSearchParam . '"';
 

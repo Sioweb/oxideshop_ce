@@ -187,7 +187,7 @@ class ArticleList extends \OxidEsales\Eshop\Core\Model\ListModel
     public function loadNewestArticles($iLimit = null)
     {
         //has module?
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         if (!$myConfig->getConfigParam('bl_perfLoadPriceForAddList')) {
             $this->getBaseObject()->disablePriceLoad();
@@ -229,7 +229,7 @@ class ArticleList extends \OxidEsales\Eshop\Core\Model\ListModel
     public function loadTop5Articles($iLimit = null)
     {
         //has module?
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         if (!$myConfig->getConfigParam('bl_perfLoadPriceForAddList')) {
             $this->getBaseObject()->disablePriceLoad();
@@ -274,7 +274,7 @@ class ArticleList extends \OxidEsales\Eshop\Core\Model\ListModel
             return;
         }
 
-        $sShopID = \OxidEsales\Eshop\Core\Registry::getConfig()->getShopId();
+        $sShopID = $this->getConfig()->getShopId();
         $sActionID = \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->quote(strtolower($sActionID));
 
         //echo $sSelect;
@@ -307,7 +307,7 @@ class ArticleList extends \OxidEsales\Eshop\Core\Model\ListModel
      */
     public function loadArticleCrossSell($sArticleId)
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         // Performance
         if (!$myConfig->getConfigParam('bl_perfLoadCrossselling')) {
@@ -359,7 +359,7 @@ class ArticleList extends \OxidEsales\Eshop\Core\Model\ListModel
      */
     public function loadArticleAccessoires($sArticleId)
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         // Performance
         if (!$myConfig->getConfigParam('bl_perfLoadAccessoires')) {
@@ -712,7 +712,8 @@ class ArticleList extends \OxidEsales\Eshop\Core\Model\ListModel
      */
     public function loadStockRemindProducts($aBasketContents)
     {
-        /*if (is_array($aBasketContents) && count($aBasketContents)) {*/
+        /** replace-in_array&count */
+        /** if (is_array($aBasketContents) && count($aBasketContents)) { */
         if (!empty($aBasketContents)) {
             $oDb = \OxidEsales\Eshop\Core\DatabaseProvider::getDb();
             foreach ($aBasketContents as $oBasketItem) {
@@ -756,7 +757,7 @@ class ArticleList extends \OxidEsales\Eshop\Core\Model\ListModel
             $iTimeToUpdate = $iNextUpdateTime;
         }
 
-        \OxidEsales\Eshop\Core\Registry::getConfig()->saveShopConfVar("num", "iTimeToUpdatePrices", $iTimeToUpdate);
+        $this->getConfig()->saveShopConfVar("num", "iTimeToUpdatePrices", $iTimeToUpdate);
 
         return $iTimeToUpdate;
     }
@@ -994,7 +995,7 @@ class ArticleList extends \OxidEsales\Eshop\Core\Model\ListModel
         }
 
         $oDb = \OxidEsales\Eshop\Core\DatabaseProvider::getDb();
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
         $sArticleTable = $this->getBaseObject()->getViewName();
 
         $aSearch = explode(' ', $sSearchString);
@@ -1127,7 +1128,7 @@ class ArticleList extends \OxidEsales\Eshop\Core\Model\ListModel
      */
     protected function _canUpdatePrices()
     {
-        $oConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $oConfig = $this->getConfig();
         $blCan = false;
 
         // crontab is off?
@@ -1229,7 +1230,7 @@ class ArticleList extends \OxidEsales\Eshop\Core\Model\ListModel
     {
         $table = Registry::get(\OxidEsales\Eshop\Core\TableViewNameGenerator::class)->getViewName('oxarticles');
         $descriptionJoin = '';
-        $searchColumns = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aSearchCols');
+        $searchColumns = $this->getConfig()->getConfigParam('aSearchCols');
 
         if (is_array($searchColumns) && in_array('oxlongdesc', $searchColumns)) {
             $viewName = getViewName('oxartextends');

@@ -94,7 +94,7 @@ class VendorMainAjax extends \OxidEsales\Eshop\Application\Controller\Admin\List
         $sQ = parent::_addFilter($sQ);
 
         // display variants or not ?
-        $sQ .= \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blVariantsSelection') ? ' group by ' . $sArtTable . '.oxid ' : '';
+        $sQ .= $this->getConfig()->getConfigParam('blVariantsSelection') ? ' group by ' . $sArtTable . '.oxid ' : '';
 
         return $sQ;
     }
@@ -104,7 +104,7 @@ class VendorMainAjax extends \OxidEsales\Eshop\Application\Controller\Admin\List
      */
     public function removeVendor()
     {
-        $oConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $oConfig = $this->getConfig();
         $aRemoveArt = $this->_getActionIds('oxarticles.oxid');
 
         if ($oConfig->getRequestParameter('all')) {
@@ -128,7 +128,7 @@ class VendorMainAjax extends \OxidEsales\Eshop\Application\Controller\Admin\List
      */
     public function addVendor()
     {
-        $oConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $oConfig = $this->getConfig();
 
         $aAddArticle = $this->_getActionIds('oxarticles.oxid');
         $soxId = $oConfig->getRequestParameter('synchoxid');

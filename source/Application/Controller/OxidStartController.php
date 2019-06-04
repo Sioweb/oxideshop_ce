@@ -6,7 +6,7 @@
 
 namespace OxidEsales\EshopCommunity\Application\Controller;
 
-use OxidEsales\Eshop\Core\SystemEventHandler;
+use oxRegistry;
 
 /**
  * Encapsulates methods for application initialization.
@@ -54,7 +54,7 @@ class OxidStartController extends \OxidEsales\Eshop\Application\Controller\Front
      */
     public function pageStart()
     {
-        $config = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $config = $this->getConfig();
 
         $config->setConfigParam('iMaxMandates', $config->getConfigParam('IMS'));
         $config->setConfigParam('iMaxArticles', $config->getConfigParam('IMA'));
@@ -103,7 +103,7 @@ class OxidStartController extends \OxidEsales\Eshop\Application\Controller\Front
     /**
      * Gets system event handler.
      *
-     * @return SystemEventHandler
+     * @return oxSystemEventHandler
      */
     protected function _getSystemEventHandler()
     {

@@ -54,7 +54,7 @@ class ArticleAccessoriesAjax extends \OxidEsales\Eshop\Application\Controller\Ad
      */
     protected function _getQuery()
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
         $sSelId = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('oxid');
         $sSynchSelId = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('synchoxid');
         $oDb = \OxidEsales\Eshop\Core\DatabaseProvider::getDb();

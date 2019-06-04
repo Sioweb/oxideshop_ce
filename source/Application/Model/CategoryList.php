@@ -73,7 +73,7 @@ class CategoryList extends \OxidEsales\Eshop\Core\Model\ListModel
      */
     public function __construct($sObjectsInListName = 'oxcategory')
     {
-        $this->_blHideEmpty = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blDontShowEmptyCategories');
+        $this->_blHideEmpty = $this->getConfig()->getConfigParam('blDontShowEmptyCategories');
         parent::__construct($sObjectsInListName);
     }
 
@@ -629,7 +629,7 @@ class CategoryList extends \OxidEsales\Eshop\Core\Model\ListModel
         }
 
         // Get sub categories of root categories
-        $database->execute("update oxcategories set oxrootid = " . $database->quote($thisRoot) . " where oxparentid = " . $database->quote($oxRootId));
+        $rs = $database->execute("update oxcategories set oxrootid = " . $database->quote($thisRoot) . " where oxparentid = " . $database->quote($oxRootId));
         $rs = $database->select("select oxid, oxparentid from oxcategories where oxparentid = " . $database->quote($oxRootId) . " order by oxsort", false);
         // If there are sub categories
         if ($rs != false && $rs->count() > 0) {

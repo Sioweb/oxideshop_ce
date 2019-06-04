@@ -14,6 +14,15 @@ use OxidEsales\Eshop\Core\Registry;
 class ExceptionHandler
 {
     /**
+     * Log file path/name
+     *
+     * @deprecated since v5.3 (2016-06-17); Logging mechanism will change in the future.
+     *
+     * @var string
+     */
+    protected $_sFileName;
+
+    /**
      * Shop debug
      *
      * @deprecated since v6.3 (2018-04-25); This functionality will be removed completely. Use an appropriate Monolog channel in the future.
@@ -30,6 +39,7 @@ class ExceptionHandler
     public function __construct($iDebug = 0)
     {
         $this->_iDebug = (int) $iDebug;
+        $this->_sFileName = basename(OX_LOG_FILE);
     }
 
     /**
@@ -60,20 +70,65 @@ class ExceptionHandler
     }
 
     /**
+     * Set the debug level
+     *
+     * @param int $iDebug debug level (0== no debug)
+     *
+     * @deprecated since v6.3 (2018-04-25); This method will be removed completely. Use an appropriate Monolog channel in the future.
+     */
+    public function setIDebug($iDebug)
+    {
+        $this->_iDebug = $iDebug;
+    }
+
+    /**
+     * Set log file name. The file will always be created in the same directory as OX_LOG_FILE
+     *
+     * @deprecated since v5.3 (2016-06-17); Logging mechanism will change in the future.
+     *
+     * @param string $fileName file name
+     */
+    public function setLogFileName($fileName)
+    {
+        $fileName = basename($fileName);
+
+        $this->_sFileName = $fileName;
+    }
+
+    /**
+     * Get log file path/name
+     *
+     * @deprecated since v5.3 (2016-06-17); Logging mechanism will change in the future.
+     *
+     * @return string
+     */
+    public function getLogFileName()
+    {
+        return basename($this->_sFileName);
+    }
+
+    /**
      * Handler for uncaught exceptions. As this is the las resort no fancy business logic should be applied here.
      *
      * @param \Throwable $exception exception object
      *
      * @return void
      **/
-    public function handleUncaughtException(\Throwable $exception)
+    public function handleUncaughtException($exception)
     {
-        Registry::getLogger()->error(
-            $exception->getMessage(),
-            [$exception]
-        );
+        /**
+         * Report the exception
+         */
+        $logWritten = (bool) $this->writeExceptionToLog($exception);
 
-        $this->renderErrorMessage($exception);
+        /**
+         * Render an error message.
+         */
+        if ($this->_iDebug) {
+            $this->displayDebugMessage($exception, $logWritten);
+        } else {
+            $this->displayOfflinePage();
+        }
 
         /**
          * Do not exit the application in UNIT tests
@@ -96,31 +151,69 @@ class ExceptionHandler
         $this->handleUncaughtException($exception);
     }
 
+    /**
+     * Write a formatted log entry to the log file.
+     *
+     * @param \Throwable $exception
+     *
+     * @deprecated since v6.3 (2018-04-25); This method will be private. Use Registry::getLogger() to log error messages in the future.
+     *
+     * @return bool
+     */
+    public function writeExceptionToLog($exception)
+    {
+        $logger = Registry::getLogger();
+        $logger->error($exception->getMessage(), [$exception]);
+
+        /** return statement is @deprecated since v6.3 (2018-04-19); The return value of this method will be void. */
+        return true;
+    }
 
     /**
-     * Exit the application with error status 1
+     * Render an error message.
+     * If offline.html exists its content is displayed.
+     * Like this the error message is overridable within that file.
+     * Do not display an error message, if this file is included during a CLI command
+     *
+     * @deprecated since v6.3 (2018-04-25); This method will be private. Use \oxTriggerOfflinePageDisplay() in the future.
+     *
+     * @return null
      */
-    protected function exitApplication()
+    public function displayOfflinePage()
     {
-        exit(1);
+        \oxTriggerOfflinePageDisplay();
+
+        return;
     }
 
     /**
      * Print a debug message to the screen.
      *
-     * @param \Throwable $exception The exception to be treated
+     * @param \Throwable $exception  The exception to be treated
+     * @param bool       $logWritten True, if an entry was written to the log file
      *
      * @deprecated since v6.3 (2018-04-25); This method will be removed completely. Use an appropriate Monolog channel in the future.
+     *
+     * @return null
      */
-    private function displayDebugMessage(\Throwable $exception)
+    protected function displayDebugMessage($exception, $logWritten = true)
     {
+        $loggingErrorMessage = $logWritten ? '' : ' Could not write log file' . PHP_EOL;
+
+        /** Just display a small note in CLI mode */
+        $phpSAPIName = strtolower(php_sapi_name());
+        if ('cli' === $phpSAPIName) {
+            echo 'Uncaught exception. See error log for more information.' . $loggingErrorMessage;
+            return;
+        }
         if (method_exists($exception, 'getString')) {
             $displayMessage = $exception->getString();
         } else {
             $displayMessage = $this->getFormattedException($exception);
         }
+        echo '<pre>' . $displayMessage . $loggingErrorMessage . '</pre>';
 
-        echo '<pre>' . $displayMessage . '</pre>';
+        return;
     }
 
     /**
@@ -132,7 +225,7 @@ class ExceptionHandler
      *
      * @return string
      */
-    private function getFormattedException(\Throwable $exception)
+    public function getFormattedException($exception)
     {
         $time = microtime(true);
         $micro = sprintf("%06d", ($time - floor($time)) * 1000000);
@@ -153,14 +246,10 @@ class ExceptionHandler
     }
 
     /**
-     * @param \Throwable $exception
+     * Exit the application with error status 1
      */
-    private function renderErrorMessage(\Throwable $exception)
+    protected function exitApplication()
     {
-        if ($this->_iDebug) {
-            $this->displayDebugMessage($exception);
-        } else {
-            \oxTriggerOfflinePageDisplay();
-        }
+        exit(1);
     }
 }

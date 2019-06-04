@@ -35,7 +35,7 @@ class CategoryMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminD
      */
     public function render()
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         parent::render();
 
@@ -139,7 +139,7 @@ class CategoryMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminD
     {
         parent::save();
 
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         $soxId = $this->getEditObjectId();
 
@@ -195,7 +195,7 @@ class CategoryMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminD
      */
     public function deletePicture()
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         if ($myConfig->isDemoShop()) {
             // disabling uploading pictures if this is demo shop
@@ -236,7 +236,7 @@ class CategoryMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminD
             return;
         }
 
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
         $sItemKey = 'oxcategories__' . $field;
 
         switch ($field) {
@@ -325,7 +325,7 @@ class CategoryMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminD
      */
     protected function resetCategoryPictures($category, $params, $categoryId)
     {
-        $config = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $config = $this->getConfig();
         $category->load($categoryId);
         $category->loadInLang($this->_iEditLang, $categoryId);
 

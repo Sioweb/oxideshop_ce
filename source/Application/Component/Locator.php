@@ -400,7 +400,7 @@ class Locator extends \OxidEsales\Eshop\Core\Base
 
         // maybe there is no page number passed, but we still can find the position in id's list
         if (!$iPageNr && $oIdList && $oArticle) {
-            $iNrofCatArticles = (int) \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('iNrofCatArticles');
+            $iNrofCatArticles = (int) $this->getConfig()->getConfigParam('iNrofCatArticles');
             $iNrofCatArticles = $iNrofCatArticles ? $iNrofCatArticles : 1;
             $sParentIdField = 'oxarticles__oxparentid';
             $sArticleId = $oArticle->$sParentIdField->value ? $oArticle->$sParentIdField->value : $oArticle->getId();
@@ -437,6 +437,9 @@ class Locator extends \OxidEsales\Eshop\Core\Base
      */
     protected function _getProductPos($oArticle, $oIdList, $oLocatorTarget)
     {
+        $iCnt = 1;
+        $iPos = 0;
+
         // variant handling
         $sOxid = $oArticle->oxarticles__oxparentid->value ? $oArticle->oxarticles__oxparentid->value : $oArticle->getId();
         if ($oIdList->count() && isset($oIdList[$sOxid])) {

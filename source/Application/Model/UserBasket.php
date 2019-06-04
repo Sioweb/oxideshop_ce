@@ -340,7 +340,7 @@ class UserBasket extends \OxidEsales\Eshop\Core\Model\BaseModel
      */
     public function isVisible()
     {
-        $oActivUser = \OxidEsales\Eshop\Core\Registry::getConfig()->getUser();
+        $oActivUser = $this->getConfig()->getUser();
         $sActivUserId = null;
         if ($oActivUser) {
             $sActivUserId = $oActivUser->getId();

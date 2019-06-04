@@ -15,6 +15,15 @@ use oxSystemComponentException;
 class Base
 {
     /**
+     * oxconfig instance
+     *
+     * @deprecated since v6.3 (2018-06-04); This attribute will be removed completely at 7.0, use Registry to get config.
+     *
+     * @var \OxidEsales\Eshop\Core\Config
+     */
+    protected static $_oConfig = null;
+
+    /**
      * oxsession instance
      *
      * @var \OxidEsales\Eshop\Core\Session
@@ -74,6 +83,30 @@ class Base
      */
     public function __construct()
     {
+    }
+
+    /**
+     * oxConfig instance getter
+     *
+     * @return \OxidEsales\Eshop\Core\Config
+     */
+    public function getConfig()
+    {
+        if (self::$_oConfig == null) {
+            self::$_oConfig = Registry::getConfig();
+        }
+
+        return self::$_oConfig;
+    }
+
+    /**
+     * oxConfig instance setter
+     *
+     * @param \OxidEsales\Eshop\Core\Config $config config object
+     */
+    public function setConfig($config)
+    {
+        self::$_oConfig = $config;
     }
 
     /**

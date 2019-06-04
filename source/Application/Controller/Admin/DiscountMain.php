@@ -25,6 +25,7 @@ class DiscountMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminD
      */
     public function render()
     {
+        $myConfig = $this->getConfig();
         parent::render();
 
         $sOxId = $this->_aViewData["oxid"] = $this->getEditObjectId();

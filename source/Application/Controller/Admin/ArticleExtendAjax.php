@@ -123,7 +123,8 @@ class ArticleExtendAjax extends \OxidEsales\Eshop\Application\Controller\Admin\L
         }
 
         // removing all
-        /*if (is_array($categoriesToRemove) && count($categoriesToRemove)) {*/
+        /** replace-in_array&count */
+        /** if (is_array($categoriesToRemove) && count($categoriesToRemove)) { */
         if (!empty($categoriesToRemove)) {
             $query = "delete from oxobject2category where oxobject2category.oxobjectid= "
                   . \OxidEsales\Eshop\Core\DatabaseProvider::getDb()->quote($oxId) . " and ";
@@ -148,7 +149,7 @@ class ArticleExtendAjax extends \OxidEsales\Eshop\Application\Controller\Admin\L
      */
     public function addCat()
     {
-        $config = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $config = $this->getConfig();
         $categoriesToAdd = $this->_getActionIds('oxcategories.oxid');
         $oxId = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('synchoxid');
         $shopId = $config->getShopId();

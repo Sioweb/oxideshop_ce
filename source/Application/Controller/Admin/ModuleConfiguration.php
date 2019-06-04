@@ -6,7 +6,9 @@
 
 namespace OxidEsales\EshopCommunity\Application\Controller\Admin;
 
-use OxidEsales\Eshop\Core\Registry as EshopRegistry;
+use oxConfig;
+use oxRegistry;
+use oxException;
 
 /**
  * Admin article main deliveryset manager.
@@ -49,15 +51,14 @@ class ModuleConfiguration extends \OxidEsales\Eshop\Application\Controller\Admin
                 $iCount = 0;
                 foreach ($this->_aConfParams as $sType => $sParam) {
                     $this->_aViewData[$sParam] = $aDbVariables['vars'][$sType];
-                    $variableCount = (is_array($aDbVariables['vars'][$sType])) ? count($aDbVariables['vars'][$sType]) : 0;
-                    $iCount += $variableCount;
+                    $iCount += count($aDbVariables['vars'][$sType]);
                 }
-            } catch (\OxidEsales\Eshop\Core\Exception\StandardException $exception) {
-                EshopRegistry::getUtilsView()->addErrorToDisplay($exception);
-                EshopRegistry::getLogger()->error($exception->getMessage(), [$exception]);
+            } catch (\OxidEsales\Eshop\Core\Exception\StandardException $oEx) {
+                \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay($oEx);
+                $oEx->debugOut();
             }
         } else {
-            EshopRegistry::getUtilsView()->addErrorToDisplay(new \OxidEsales\Eshop\Core\Exception\StandardException('EXCEPTION_MODULE_NOT_LOADED'));
+            \OxidEsales\Eshop\Core\Registry::getUtilsView()->addErrorToDisplay(new \OxidEsales\Eshop\Core\Exception\StandardException('EXCEPTION_MODULE_NOT_LOADED'));
         }
 
         $this->_aViewData["oModule"] = $oModule;
@@ -88,7 +89,7 @@ class ModuleConfiguration extends \OxidEsales\Eshop\Application\Controller\Admin
      */
     public function _loadMetadataConfVars($aModuleSettings)
     {
-        $oConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $oConfig = $this->getConfig();
 
         $aConfVars = [
             "bool"     => [],
@@ -162,7 +163,7 @@ class ModuleConfiguration extends \OxidEsales\Eshop\Application\Controller\Admin
      */
     public function saveConfVars()
     {
-        $oConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $oConfig = $this->getConfig();
 
         $this->resetContentCache();
 

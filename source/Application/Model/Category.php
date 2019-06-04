@@ -271,7 +271,7 @@ class Category extends \OxidEsales\Eshop\Core\Model\MultiLanguageModel implement
 
         $sOXID = isset($sOXID) ? $sOXID : $this->getId();
 
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
         $oDb = \OxidEsales\Eshop\Core\DatabaseProvider::getDb();
         $blRet = false;
 
@@ -428,7 +428,7 @@ class Category extends \OxidEsales\Eshop\Core\Model\MultiLanguageModel implement
      */
     public function getNrOfArticles()
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         if (!isset($this->_iNrOfArticles)
             && !$this->isAdmin()
@@ -465,7 +465,7 @@ class Category extends \OxidEsales\Eshop\Core\Model\MultiLanguageModel implement
     public function getIsVisible()
     {
         if (!isset($this->_blIsVisible)) {
-            if (\OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blDontShowEmptyCategories')) {
+            if ($this->getConfig()->getConfigParam('blDontShowEmptyCategories')) {
                 $blEmpty = ($this->getNrOfArticles() < 1) && !$this->getHasVisibleSubCats();
             } else {
                 $blEmpty = false;
@@ -496,7 +496,7 @@ class Category extends \OxidEsales\Eshop\Core\Model\MultiLanguageModel implement
     {
         if ($this->_sDynImageDir === null) {
             $sThisShop = $this->oxcategories__oxshopid->value;
-            $this->_sDynImageDir = \OxidEsales\Eshop\Core\Registry::getConfig()->getPictureUrl(null, false, null, null, $sThisShop);
+            $this->_sDynImageDir = $this->getConfig()->getPictureUrl(null, false, null, null, $sThisShop);
         }
 
         return $this->_sDynImageDir;
@@ -608,7 +608,7 @@ class Category extends \OxidEsales\Eshop\Core\Model\MultiLanguageModel implement
         $sUrl = '';
         if ($blFull) {
             //always returns shop url, not admin
-            $sUrl = \OxidEsales\Eshop\Core\Registry::getConfig()->getShopUrl($iLang, false);
+            $sUrl = $this->getConfig()->getShopUrl($iLang, false);
         }
 
         //always returns shop url, not admin
@@ -1004,7 +1004,7 @@ class Category extends \OxidEsales\Eshop\Core\Model\MultiLanguageModel implement
     public function getIconUrl()
     {
         if (($sIcon = $this->oxcategories__oxicon->value)) {
-            $oConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+            $oConfig = $this->getConfig();
             $sSize = $oConfig->getConfigParam('sCatIconsize');
             if (!isset($sSize)) {
                 $sSize = $oConfig->getConfigParam('sIconsize');
@@ -1022,7 +1022,7 @@ class Category extends \OxidEsales\Eshop\Core\Model\MultiLanguageModel implement
     public function getThumbUrl()
     {
         if (($sIcon = $this->oxcategories__oxthumb->value)) {
-            $sSize = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('sCatThumbnailsize');
+            $sSize = $this->getConfig()->getConfigParam('sCatThumbnailsize');
 
             return \OxidEsales\Eshop\Core\Registry::getPictureHandler()->getPicUrl("category/thumb/", $sIcon, $sSize);
         }
@@ -1036,7 +1036,7 @@ class Category extends \OxidEsales\Eshop\Core\Model\MultiLanguageModel implement
     public function getPromotionIconUrl()
     {
         if (($sIcon = $this->oxcategories__oxpromoicon->value)) {
-            $sSize = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('sCatPromotionsize');
+            $sSize = $this->getConfig()->getConfigParam('sCatPromotionsize');
 
             return \OxidEsales\Eshop\Core\Registry::getPictureHandler()->getPicUrl("category/promo_icon/", $sIcon, $sSize);
         }

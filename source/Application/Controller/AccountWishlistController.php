@@ -220,6 +220,7 @@ class AccountWishlistController extends \OxidEsales\Eshop\Application\Controller
                 if ($oUser = $this->getUser()) {
                     $sFirstName = 'oxuser__oxfname';
                     $sLastName = 'oxuser__oxlname';
+                    $sSendName = 'send_name';
                     $sSendEmail = 'send_email';
                     $sUserNameField = 'oxuser__oxusername';
                     $sSendName = 'send_name';

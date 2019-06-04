@@ -216,11 +216,13 @@ class MultiLanguageModel extends \OxidEsales\Eshop\Core\Model\BaseModel
 
         // checks if object field data is not empty in all available languages
         // and formats not available in languages array
-        if (isset($rs[0]) && is_array($rs[0]) && count($rs[0])) {
+        /** replace-in_array&count */
+        /** if (is_array($rs) && count($rs[0])) { */
+        if (!empty($rs)) {
             foreach ($multiLangFields as $fieldId => $multiLangIds) {
                 foreach ($multiLangIds as $multiLangId) {
                     $fieldName = ($multiLangId == 0) ? $fieldId : $fieldId . '_' . $multiLangId;
-                    if ($rs[0][strtoupper($fieldName)]) {
+                    if ($rs['0'][strtoupper($fieldName)]) {
                         unset($notInLang[$multiLangId]);
                         continue;
                     }
@@ -405,6 +407,18 @@ class MultiLanguageModel extends \OxidEsales\Eshop\Core\Model\BaseModel
         }
 
         return $sql;
+    }
+
+    /**
+     * If needed, check if field can be updated
+     *
+     * @param string $fieldName
+     *
+     * @return bool
+     */
+    protected function checkFieldCanBeUpdated($fieldName)
+    {
+        return true;
     }
 
     /**

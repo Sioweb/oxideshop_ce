@@ -57,7 +57,7 @@ class CategoriesComponent extends \OxidEsales\Eshop\Core\Controller\BaseControll
         parent::init();
 
         // Performance
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
         if ($myConfig->getConfigParam('blDisableNavBars') &&
             $myConfig->getTopActiveView()->getIsOrderStep()
         ) {
@@ -113,7 +113,7 @@ class CategoriesComponent extends \OxidEsales\Eshop\Core\Controller\BaseControll
         // loaded article - then checking additional parameters
         $oProduct = $this->getProduct();
         if ($oProduct) {
-            $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+            $myConfig = $this->getConfig();
 
             $sActManufacturer = $myConfig->getConfigParam('bl_perfLoadManufacturerTree') ? $sActManufacturer : null;
 
@@ -125,7 +125,7 @@ class CategoriesComponent extends \OxidEsales\Eshop\Core\Controller\BaseControll
         // Checking for the default category
         if ($sActCat === null && !$oProduct && !$sActManufacturer) {
             // set remote cat
-            $sActCat = \OxidEsales\Eshop\Core\Registry::getConfig()->getActiveShop()->oxshops__oxdefcat->value;
+            $sActCat = $this->getConfig()->getActiveShop()->oxshops__oxdefcat->value;
             if ($sActCat == 'oxrootid') {
                 // means none selected
                 $sActCat = null;
@@ -163,7 +163,7 @@ class CategoriesComponent extends \OxidEsales\Eshop\Core\Controller\BaseControll
      */
     protected function _loadManufacturerTree($sActManufacturer)
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
         if ($myConfig->getConfigParam('bl_perfLoadManufacturerTree')) {
             $oManufacturerTree = $this->getManufacturerList();
             $shopHomeURL = $myConfig->getShopHomeUrl();
@@ -193,7 +193,7 @@ class CategoriesComponent extends \OxidEsales\Eshop\Core\Controller\BaseControll
         parent::render();
 
         // Performance
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
         $oParentView = $this->getParent();
 
         if ($myConfig->getConfigParam('bl_perfLoadManufacturerTree') && $this->_oManufacturerTree) {
@@ -264,7 +264,8 @@ class CategoriesComponent extends \OxidEsales\Eshop\Core\Controller\BaseControll
     {
         $sListType = null;
         $aArticleCats = $oProduct->getCategoryIds(true);
-        /*if (is_array($aArticleCats) && count($aArticleCats)) {*/
+        /** replace-in_array&count */
+        /** if (is_array($aArticleCats) && count($aArticleCats)) { */
         if (!empty($aArticleCats)) {
             $sActCat = reset($aArticleCats);
         } elseif (($sActCat = $oProduct->getManufacturerId())) {

@@ -115,7 +115,7 @@ class UtilsFile extends \OxidEsales\Eshop\Core\Base
      */
     public function __construct()
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
 
         if ($iPicCount = $myConfig->getConfigParam('iPicCount')) {
             $this->_iMaxPicImgCount = $iPicCount;
@@ -304,7 +304,7 @@ class UtilsFile extends \OxidEsales\Eshop\Core\Base
     {
         $sFolder = array_key_exists($sType, $this->_aTypeToPath) ? $this->_aTypeToPath[$sType] : '0';
 
-        return $this->normalizeDir(\OxidEsales\Eshop\Core\Registry::getConfig()->getPictureDir(false)) . "{$sFolder}/";
+        return $this->normalizeDir($this->getConfig()->getPictureDir(false)) . "{$sFolder}/";
     }
 
     /**
@@ -319,7 +319,8 @@ class UtilsFile extends \OxidEsales\Eshop\Core\Base
      */
     protected function _getImageSize($sImgType, $iImgNum, $sImgConf)
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
+        $sSize = false;
 
         switch ($sImgConf) {
             case 'aDetailImageSizes':
@@ -348,12 +349,15 @@ class UtilsFile extends \OxidEsales\Eshop\Core\Base
      */
     protected function _copyFile($sSource, $sTarget)
     {
+        $blDone = false;
+
         if (!is_dir(dirname($sTarget))) {
             mkdir(dirname($sTarget), 0744, true);
         }
 
-        $blDone = true;
-        if ($sSource !== $sTarget) {
+        if ($sSource === $sTarget) {
+            $blDone = true;
+        } else {
             $blDone = copy($sSource, $sTarget);
         }
 
@@ -374,12 +378,13 @@ class UtilsFile extends \OxidEsales\Eshop\Core\Base
      */
     protected function _moveImage($sSource, $sTarget)
     {
+        $blDone = false;
         if (!is_dir(dirname($sTarget))) {
             mkdir(dirname($sTarget), 0744, true);
         }
-
-        $blDone = true;
-        if ($sSource !== $sTarget) {
+        if ($sSource === $sTarget) {
+            $blDone = true;
+        } else {
             $blDone = move_uploaded_file($sSource, $sTarget);
         }
 
@@ -405,7 +410,7 @@ class UtilsFile extends \OxidEsales\Eshop\Core\Base
     {
         $aFiles = $aFiles ? $aFiles : $_FILES;
         if (isset($aFiles['myfile']['name'])) {
-            $oConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+            $oConfig = $this->getConfig();
 
             // A. protection for demoshops - strictly defining allowed file extensions
             $blDemo = (bool) $oConfig->isDemoShop();
@@ -484,8 +489,12 @@ class UtilsFile extends \OxidEsales\Eshop\Core\Base
             return $aCheckCache[$sFile];
         }
 
-        $blRet = true;
-        if (!is_readable($sFile)) {
+        $blRet = false;
+
+        if (is_readable($sFile)) {
+            $blRet = true;
+        } else {
+            // try again via socket
             $blRet = $this->urlValidate($sFile);
         }
 
@@ -542,7 +551,7 @@ class UtilsFile extends \OxidEsales\Eshop\Core\Base
     {
         $aFileInfo = $_FILES[$sFileName];
 
-        $sBasePath = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('sShopDir');
+        $sBasePath = $this->getConfig()->getConfigParam('sShopDir');
 
         //checking params
         if (!isset($aFileInfo['name']) || !isset($aFileInfo['tmp_name'])) {
@@ -564,7 +573,7 @@ class UtilsFile extends \OxidEsales\Eshop\Core\Base
         $sExt = $aPathInfo['extension'];
         $sFileName = $aPathInfo['filename'];
 
-        $aAllowedUploadTypes = (array) \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aAllowedUploadTypes');
+        $aAllowedUploadTypes = (array) $this->getConfig()->getConfigParam('aAllowedUploadTypes');
         $aAllowedUploadTypes = array_map("strtolower", $aAllowedUploadTypes);
 
         if (!in_array(strtolower($sExt), $aAllowedUploadTypes)) {

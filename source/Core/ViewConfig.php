@@ -116,7 +116,7 @@ class ViewConfig extends \OxidEsales\Eshop\Core\Base
      */
     public function getActContentLoadId()
     {
-        $sTplName = $this->getConfig()->getRequestParameter('oxloadid');
+        $sTplName = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('oxloadid');
         // #M1176: Logout from CMS page
         if (!$sTplName && $this->getConfig()->getTopActiveView()) {
             $sTplName = $this->getConfig()->getTopActiveView()->getViewConfig()->getViewConfigParam('oxloadid');
@@ -132,7 +132,7 @@ class ViewConfig extends \OxidEsales\Eshop\Core\Base
      */
     public function getActTplName()
     {
-        return $this->getConfig()->getRequestParameter('tpl');
+        return \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('tpl');
     }
 
     /**
@@ -223,7 +223,7 @@ class ViewConfig extends \OxidEsales\Eshop\Core\Base
      */
     public function getActCatId()
     {
-        return $this->getConfig()->getRequestParameter('cnid');
+        return \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('cnid');
     }
 
     /**
@@ -233,7 +233,7 @@ class ViewConfig extends \OxidEsales\Eshop\Core\Base
      */
     public function getActArticleId()
     {
-        return $this->getConfig()->getRequestParameter('anid');
+        return \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('anid');
     }
 
     /**
@@ -243,7 +243,7 @@ class ViewConfig extends \OxidEsales\Eshop\Core\Base
      */
     public function getActSearchParam()
     {
-        return $this->getConfig()->getRequestParameter('searchparam');
+        return \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('searchparam');
     }
 
     /**
@@ -255,7 +255,7 @@ class ViewConfig extends \OxidEsales\Eshop\Core\Base
      */
     public function getActRecommendationId()
     {
-        return $this->getConfig()->getRequestParameter('recommid');
+        return \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('recommid');
     }
 
     /**
@@ -265,7 +265,7 @@ class ViewConfig extends \OxidEsales\Eshop\Core\Base
      */
     public function getActListType()
     {
-        return $this->getConfig()->getRequestParameter('listtype');
+        return \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('listtype');
     }
 
     /**
@@ -275,7 +275,7 @@ class ViewConfig extends \OxidEsales\Eshop\Core\Base
      */
     public function getActManufacturerId()
     {
-        return $this->getConfig()->getRequestParameter('mnid');
+        return \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('mnid');
     }
 
     /**
@@ -285,7 +285,7 @@ class ViewConfig extends \OxidEsales\Eshop\Core\Base
      */
     public function getContentId()
     {
-        return $this->getConfig()->getRequestParameter('oxcid');
+        return \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('oxcid');
     }
 
     /**
@@ -801,13 +801,13 @@ class ViewConfig extends \OxidEsales\Eshop\Core\Base
         $sListType = \OxidEsales\Eshop\Core\Registry::getSession()->getVariable('ldtype');
 
         if (is_null($sListType)) {
-            $sListType = $this->getConfig()->getConfigParam('sDefaultListDisplayType');
+            $sListType = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('sDefaultListDisplayType');
         }
 
         if ('grid' === $sListType) {
-            $aNrOfCatArticles = $this->getConfig()->getConfigParam('aNrofCatArticlesInGrid');
+            $aNrOfCatArticles = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aNrofCatArticlesInGrid');
         } else {
-            $aNrOfCatArticles = $this->getConfig()->getConfigParam('aNrofCatArticles');
+            $aNrOfCatArticles = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aNrofCatArticles');
         }
 
         return $aNrOfCatArticles;
@@ -894,7 +894,7 @@ class ViewConfig extends \OxidEsales\Eshop\Core\Base
     public function getActLanguageId()
     {
         if (($sValue = $this->getViewConfigParam('lang')) === null) {
-            $iLang = $this->getConfig()->getRequestParameter('lang');
+            $iLang = \OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter('lang');
             $sValue = ($iLang !== null) ? $iLang : \OxidEsales\Eshop\Core\Registry::getLang()->getBaseLanguage();
             $this->setViewConfigParam('lang', $sValue);
         }
@@ -1184,7 +1184,7 @@ class ViewConfig extends \OxidEsales\Eshop\Core\Base
                  * This error should be reported, as it will be the cause of an unexpected behavior of the shop an the
                  * operator should be given a chance to analyse the issue.
                  */
-                \OxidEsales\Eshop\Core\Registry::getLogger()->error($exception->getMessage(), [$exception]);
+                $exception->debugOut();
                 return '';
             }
         }
@@ -1498,18 +1498,5 @@ class ViewConfig extends \OxidEsales\Eshop\Core\Base
     public function getDynUrlParameters($listType)
     {
         return '';
-    }
-
-    /**
-     * Config instance getter
-     *
-     * @deprecated since b-dev (2018-11-14); This method will be removed completely. Extend your views accordingly and use
-     *             $this->setViewData('someVar', 'some Value'); to provide the data to your templates
-     *
-     * @return \OxidEsales\Eshop\Core\Config
-     */
-    public function getConfig()
-    {
-        return \OxidEsales\Eshop\Core\Registry::getConfig();
     }
 }

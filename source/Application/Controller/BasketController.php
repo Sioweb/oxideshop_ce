@@ -104,7 +104,7 @@ class BasketController extends \OxidEsales\Eshop\Application\Controller\Frontend
      */
     public function render()
     {
-        if (\OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blPsBasketReservationEnabled')) {
+        if ($this->getConfig()->getConfigParam('blPsBasketReservationEnabled')) {
             $this->getSession()->getBasketReservations()->renewExpiration();
         }
 
@@ -197,7 +197,7 @@ class BasketController extends \OxidEsales\Eshop\Application\Controller\Frontend
      */
     public function showBackToShop()
     {
-        $iNewBasketItemMessage = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('iNewBasketItemMessage');
+        $iNewBasketItemMessage = $this->getConfig()->getConfigParam('iNewBasketItemMessage');
         $sBackToShop = \OxidEsales\Eshop\Core\Registry::getSession()->getVariable('_backtoshop');
 
         return ($iNewBasketItemMessage == 3 && $sBackToShop);
@@ -242,7 +242,7 @@ class BasketController extends \OxidEsales\Eshop\Application\Controller\Frontend
      */
     public function backToShop()
     {
-        if (\OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('iNewBasketItemMessage') == 3) {
+        if ($this->getConfig()->getConfigParam('iNewBasketItemMessage') == 3) {
             $oSession = \OxidEsales\Eshop\Core\Registry::getSession();
             if ($sBackLink = $oSession->getVariable('_backtoshop')) {
                 $oSession->deleteVariable('_backtoshop');
@@ -382,7 +382,8 @@ class BasketController extends \OxidEsales\Eshop\Application\Controller\Frontend
      */
     protected function _setWrappingInfo($oBasket, $aWrapping)
     {
-        /*if (is_array($aWrapping) && count($aWrapping)) {*/
+        /** replace-in_array&count */
+        /** if (is_array($aWrapping) && count($aWrapping)) { */
         if (!empty($aWrapping)) {
             foreach ($oBasket->getContents() as $sKey => $oBasketItem) {
                 if (isset($aWrapping[$sKey])) {

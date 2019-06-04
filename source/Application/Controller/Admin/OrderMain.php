@@ -166,7 +166,7 @@ class OrderMain extends \OxidEsales\Eshop\Application\Controller\Admin\AdminDeta
             $oOrder->save();
 
             // #1071C
-            $oOrder->getOrderArticles(true);
+            $oOrderArticles = $oOrder->getOrderArticles(true);
             if (\OxidEsales\Eshop\Core\Registry::getConfig()->getRequestParameter("sendmail")) {
                 // send eMail
                 $oEmail = oxNew(\OxidEsales\Eshop\Core\Email::class);

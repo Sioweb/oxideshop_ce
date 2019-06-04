@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 /**
  * Copyright © OXID eSales AG. All rights reserved.
  * See LICENSE file for license details.
@@ -7,12 +7,11 @@
 namespace OxidEsales\EshopCommunity\Internal\Utility;
 
 use OxidEsales\Eshop\Core\Config;
-use OxidEsales\EshopCommunity\Internal\Application\Utility\BasicContext;
 
 /**
  * @internal
  */
-class Context extends BasicContext implements ContextInterface
+class Context implements ContextInterface
 {
     /**
      * @var Config
@@ -31,14 +30,6 @@ class Context extends BasicContext implements ContextInterface
     /**
      * @return string
      */
-    public function getEnvironment(): string
-    {
-        return 'prod';
-    }
-
-    /**
-     * @return string
-     */
     public function getLogLevel()
     {
         return $this->getConfigParameter('sLogLevel');
@@ -47,7 +38,7 @@ class Context extends BasicContext implements ContextInterface
     /**
      * @return string
      */
-    public function getLogFilePath(): string
+    public function getLogFilePath()
     {
         return $this->config->getLogsDir() . 'oxideshop.log';
     }
@@ -55,35 +46,11 @@ class Context extends BasicContext implements ContextInterface
     /**
      * @return array
      */
-    public function getRequiredContactFormFields(): array
+    public function getRequiredContactFormFields()
     {
         $contactFormRequiredFields = $this->getConfigParameter('contactFormRequiredFields');
 
         return $contactFormRequiredFields === null ? [] : $contactFormRequiredFields;
-    }
-
-    /**
-     * @return int
-     */
-    public function getCurrentShopId(): int
-    {
-        return $this->config->getShopId();
-    }
-
-    /**
-     * @return string
-     */
-    public function getContainerCacheFile()
-    {
-        return $this->getConfigParameter('sCompileDir') . DIRECTORY_SEPARATOR . 'containercache.php';
-    }
-
-    /**
-     * @return string
-     */
-    public function getConfigurationEncryptionKey(): string
-    {
-        return $this->getConfigParameter('sConfigKey');
     }
 
     /**

@@ -67,7 +67,7 @@ class ToolsList extends \OxidEsales\Eshop\Application\Controller\Admin\AdminList
                 $aQErrorMessages = [];
                 $aQErrorNumbers = [];
 
-                if (!empty($aQueries) && is_array($aQueries)) {
+                if (count($aQueries) > 0) {
                     $blStop = false;
                     $oDB = \OxidEsales\Eshop\Core\DatabaseProvider::getDb();
                     $iQueriesCounter = 0;
@@ -129,6 +129,9 @@ class ToolsList extends \OxidEsales\Eshop\Application\Controller\Admin\AdminList
             foreach ($_FILES['myfile']['name'] as $key => $value) {
                 $aSource = $_FILES['myfile']['tmp_name'];
                 $sSource = $aSource[$key];
+                $aFiletype = explode("@", $key);
+                $key = $aFiletype[1];
+                $sType = $aFiletype[0];
                 $value = strtolower($value);
                 // add type to name
                 $aFilename = explode(".", $value);
@@ -168,6 +171,7 @@ class ToolsList extends \OxidEsales\Eshop\Application\Controller\Admin\AdminList
      */
     protected function _prepareSQL($sSQL, $iSQLlen)
     {
+        $sChar = "";
         $sStrStart = "";
         $blString = false;
         $oStr = getStr();

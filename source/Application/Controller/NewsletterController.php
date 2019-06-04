@@ -111,6 +111,8 @@ class NewsletterController extends \OxidEsales\Eshop\Application\Controller\Fron
         $oUser = oxNew(\OxidEsales\Eshop\Application\Model\User::class);
         $oUser->oxuser__oxusername = new \OxidEsales\Eshop\Core\Field($aParams['oxuser__oxusername'], \OxidEsales\Eshop\Core\Field::T_RAW);
 
+        $blUserLoaded = false;
+
         // if such user does not exist
         if (!$oUser->exists()) {
             // and subscribe is off - error, on - create
@@ -121,7 +123,7 @@ class NewsletterController extends \OxidEsales\Eshop\Application\Controller\Fron
             } else {
                 $oUser->oxuser__oxactive = new \OxidEsales\Eshop\Core\Field(1, \OxidEsales\Eshop\Core\Field::T_RAW);
                 $oUser->oxuser__oxrights = new \OxidEsales\Eshop\Core\Field('user', \OxidEsales\Eshop\Core\Field::T_RAW);
-                $oUser->oxuser__oxshopid = new \OxidEsales\Eshop\Core\Field(\OxidEsales\Eshop\Core\Registry::getConfig()->getShopId(), \OxidEsales\Eshop\Core\Field::T_RAW);
+                $oUser->oxuser__oxshopid = new \OxidEsales\Eshop\Core\Field($this->getConfig()->getShopId(), \OxidEsales\Eshop\Core\Field::T_RAW);
                 $oUser->oxuser__oxfname = new \OxidEsales\Eshop\Core\Field($aParams['oxuser__oxfname'], \OxidEsales\Eshop\Core\Field::T_RAW);
                 $oUser->oxuser__oxlname = new \OxidEsales\Eshop\Core\Field($aParams['oxuser__oxlname'], \OxidEsales\Eshop\Core\Field::T_RAW);
                 $oUser->oxuser__oxsal = new \OxidEsales\Eshop\Core\Field($aParams['oxuser__oxsal'], \OxidEsales\Eshop\Core\Field::T_RAW);
@@ -138,7 +140,7 @@ class NewsletterController extends \OxidEsales\Eshop\Application\Controller\Fron
             //removing user from subscribe list before adding
             $oUser->setNewsSubscription(false, false);
 
-            $blOrderOptInEmail = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blOrderOptInEmail');
+            $blOrderOptInEmail = $this->getConfig()->getConfigParam('blOrderOptInEmail');
             if ($oUser->setNewsSubscription(true, $blOrderOptInEmail)) {
                 // done, confirmation required?
                 if ($blOrderOptInEmail) {
@@ -211,7 +213,7 @@ class NewsletterController extends \OxidEsales\Eshop\Application\Controller\Fron
     {
         if ($this->_oActionArticles === null) {
             $this->_oActionArticles = false;
-            if (\OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('bl_perfLoadAktion')) {
+            if ($this->getConfig()->getConfigParam('bl_perfLoadAktion')) {
                 $oArtList = oxNew(\OxidEsales\Eshop\Application\Model\ArticleList::class);
                 $oArtList->loadActionArticles('OXTOPSTART');
                 if ($oArtList->count()) {
@@ -250,7 +252,7 @@ class NewsletterController extends \OxidEsales\Eshop\Application\Controller\Fron
     {
         if ($this->_sHomeCountryId === null) {
             $this->_sHomeCountryId = false;
-            $aHomeCountry = \OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('aHomeCountry');
+            $aHomeCountry = $this->getConfig()->getConfigParam('aHomeCountry');
             if (is_array($aHomeCountry)) {
                 $this->_sHomeCountryId = current($aHomeCountry);
             }

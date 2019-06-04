@@ -54,7 +54,7 @@ class AttributeMainAjax extends \OxidEsales\Eshop\Application\Controller\Admin\L
      */
     protected function _getQuery()
     {
-        $myConfig = \OxidEsales\Eshop\Core\Registry::getConfig();
+        $myConfig = $this->getConfig();
         $oDb = \OxidEsales\Eshop\Core\DatabaseProvider::getDb();
 
         $sArticleTable = $this->_getViewName('oxarticles');
@@ -105,7 +105,7 @@ class AttributeMainAjax extends \OxidEsales\Eshop\Application\Controller\Admin\L
         $sQ = parent::_addFilter($sQ);
 
         // display variants or not ?
-        if (\OxidEsales\Eshop\Core\Registry::getConfig()->getConfigParam('blVariantsSelection')) {
+        if ($this->getConfig()->getConfigParam('blVariantsSelection')) {
             $sQ .= ' group by ' . $this->_getViewName('oxarticles') . '.oxid ';
 
             $oStr = getStr();
